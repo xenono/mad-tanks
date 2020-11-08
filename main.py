@@ -1,4 +1,5 @@
 import pygame
+from objects.players_tank import PlayersTank
 
 pygame.init()
 
@@ -6,14 +7,32 @@ screen = pygame.display.set_mode((1000, 600))
 pygame.display.set_caption("Tanks")
 background = pygame.image.load("assets/background.jpg").convert_alpha()
 
+playersTank = PlayersTank(50, 50, screen)
+
 running = True
 while running:
 
     screen.blit(background, (0, 0))
+    playersTank.draw()
 
     for event in pygame.event.get():
         # Closes the window when pressing X on upper taskbar
         if event.type == pygame.QUIT:
             running = False
 
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT:
+                playersTank.move("LEFT")
+            elif event.key == pygame.K_RIGHT:
+                playersTank.move("RIGHT")
+            elif event.key == pygame.K_DOWN:
+                playersTank.move("DOWN")
+            elif event.key == pygame.K_UP:
+                playersTank.move("UP")
+
+        if event.type == pygame.KEYUP:
+            playersTank.stop()
+
+
+    playersTank.update()
     pygame.display.update()
