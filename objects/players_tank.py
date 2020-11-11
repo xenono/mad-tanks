@@ -1,8 +1,20 @@
 import pygame
 
-# Pre defined constant variables of speed X and Y
-SPEED_X = 0.7
-SPEED_Y = 0.7
+# Pre defined constant variables of speed in each direction
+SPEED = {
+    "UP": -0.7,
+    "DOWN": 0.7,
+    "RIGHT": 0.7,
+    "LEFT": -0.7
+}
+
+# Constant possible direction of movement direction : angle
+DIRECTIONS = {
+    "UP": 0,
+    "LEFT": 90,
+    "DOWN": 180,
+    "RIGHT": 270
+}
 
 
 class PlayersTank:
@@ -30,30 +42,24 @@ class PlayersTank:
         self.screen.blit(self.image, (self.position["x"], self.position["y"]))
 
     def move(self, direction):
-        if direction == "UP":
-            self.speed_y = -SPEED_Y
+        # Changes speed according to the direction
+        if direction == "UP" or direction == "DOWN":
+            self.speed_y = SPEED[direction]
+
+            # Fix Y position caused rectangle sprite
             if self.current_image_angle == 90 or self.current_image_angle == 270:
                 self.position["y"] -= self.height / 3
-            self.rotate_sprite("UP")
 
-        if direction == "DOWN":
-            self.speed_y = SPEED_Y
-            self.rotate_sprite("DOWN")
-        if direction == "RIGHT":
-            self.speed_x = SPEED_X
-            if self.current_image_angle == 0:
-                self.position["y"] += self.height / 3
-                self.position["x"] -= self.width / 4
+        elif direction == "RIGHT" or direction == "LEFT":
+            self.speed_x = SPEED[direction]
 
-            self.rotate_sprite("RIGHT")
-            print(self.current_image_angle)
+            # Fix Y position caused rectangle sprite
+            if self.current_image_angle == 0 or self.current_image_angle == 180:
+                self.position["y"] += self.height / 6
 
-        if direction == "LEFT":
-            self.speed_x = -SPEED_X
-            if self.current_image_angle == 0:
-                self.position["y"] += self.height / 3
-                self.position["x"] -= self.width / 4
-            self.rotate_sprite("LEFT")
+        # Rotates sprite
+        self.rotate_sprite(direction)
+
 
     def update(self):
         # Moves sprite on x axis
@@ -64,59 +70,12 @@ class PlayersTank:
     def stop(self):
         self.speed_x = self.speed_y = 0
 
-    def rotate_sprite(self, direction):
-        if direction == "UP":
-            if self.current_image_angle == 0:
-                return
-            elif self.current_image_angle == 270:
-                self.image = pygame.transform.rotate(self.image, 90)
-                self.current_image_angle = 0
-            elif abs(self.current_image_angle) == 180:
-                self.image = pygame.transform.rotate(self.image, 180)
-                self.current_image_angle = 0
-            elif abs(self.current_image_angle) == 90:
-                self.image = pygame.transform.rotate(self.image, -90)
-                self.current_image_angle = 0
+    def rotate_sprite(self, destination_direction):
+        # rotates image in appropriate direction
+        if destination_direction == self.current_image_angle:
+            self.current_image_angle = DIRECTIONS[destination_direction]
             return
-
-        elif direction == "DOWN":
-            if self.current_image_angle == 180:
-                return
-            elif self.current_image_angle == 0:
-                self.image = pygame.transform.rotate(self.image, 180)
-                self.current_image_angle = 180
-            elif self.current_image_angle == 270:
-                self.image = pygame.transform.rotate(self.image, 270)
-                self.current_image_angle = 180
-            elif self.current_image_angle == 90:
-                self.image = pygame.transform.rotate(self.image, 90)
-                self.current_image_angle = 180
-            return
-
-        elif direction == "RIGHT":
-            if self.current_image_angle == 270:
-                return
-            elif self.current_image_angle == 0:
-                self.image = pygame.transform.rotate(self.image, 270)
-                self.current_image_angle = 270
-            elif self.current_image_angle == 180:
-                self.image = pygame.transform.rotate(self.image, 90)
-                self.current_image_angle = 270
-            elif self.current_image_angle == 90:
-                self.image = pygame.transform.rotate(self.image, 180)
-                self.current_image_angle = 270
-            return
-        elif direction == "LEFT":
-            if self.current_image_angle == 90:
-                return
-            elif self.current_image_angle == 0:
-                self.image = pygame.transform.rotate(self.image, 90)
-                self.current_image_angle = 90
-            elif self.current_image_angle == 180:
-                self.image = pygame.transform.rotate(self.image, 270)
-                self.current_image_angle = 90
-            elif self.current_image_angle == 270:
-                self.image = pygame.transform.rotate(self.image, 180)
-                self.current_image_angle = 90
-            return
-
+        # Calculates angle difference
+        rotate_angle = DIRECTIONS[destination_direction] - self.current_image_angle
+        self.image = pygame.transform.rotate(self.image, rotate_angle)
+        self.current_image_angle = DIRECTIONS[destination_direction]
