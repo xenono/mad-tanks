@@ -3,11 +3,20 @@ from objects.players_tank import PlayersTank
 
 pygame.init()
 
-screen = pygame.display.set_mode((1000, 600))
+screenX = 1000
+screenY = 600
+borderSize = 5
+screen = pygame.display.set_mode((screenX, screenY))
+
+
 pygame.display.set_caption("Tanks")
 background = pygame.image.load("assets/background.jpg").convert_alpha()
 
-playersTank = PlayersTank(50, 50, screen)
+playersTank = PlayersTank(500, 300, screen)
+
+# All objects which are in game alive.
+inGameObjects = [playersTank]
+
 
 running = True
 while running:
@@ -32,6 +41,19 @@ while running:
 
         if event.type == pygame.KEYUP:
             playersTank.stop()
+
+    for sprite in inGameObjects:
+        if sprite.position["x"] <= borderSize:
+            sprite.position["x"] = borderSize
+        if sprite.position["x"] + sprite.width >= screenX - borderSize:
+            sprite.position["x"] = screenX - sprite.width - borderSize
+        if sprite.position["y"] <= borderSize:
+            sprite.position["y"] = borderSize
+        if sprite.position["y"] + sprite.height >= screenY - borderSize:
+            sprite.position["y"] = screenY - sprite.height - borderSize
+
+
+
 
 
     playersTank.update()

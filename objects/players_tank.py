@@ -1,5 +1,9 @@
 import pygame
 
+# Initial sprite dimensions
+TANK_WIDTH = 50
+TANK_HEIGHT = 76
+
 # Pre defined constant variables of speed in each direction
 SPEED = {
     "UP": -0.7,
@@ -44,18 +48,23 @@ class PlayersTank:
     def move(self, direction):
         # Changes speed according to the direction
         if direction == "UP" or direction == "DOWN":
+            self.width = TANK_WIDTH
+            self.height = TANK_HEIGHT
             self.speed_y = SPEED[direction]
 
             # Fix Y position caused rectangle sprite
-            if self.current_image_angle == 90 or self.current_image_angle == 270:
-                self.position["y"] -= self.height / 3
+            if self.current_image_angle == 270:
+                self.position["x"] += 25
 
         elif direction == "RIGHT" or direction == "LEFT":
+            # Swap dimensions (sprite is a rectangle)
+            self.width = TANK_HEIGHT
+            self.height = TANK_WIDTH
             self.speed_x = SPEED[direction]
 
             # Fix Y position caused rectangle sprite
-            if self.current_image_angle == 0 or self.current_image_angle == 180:
-                self.position["y"] += self.height / 6
+            if self.current_image_angle == 180:
+                self.position["y"] += 24
 
         # Rotates sprite
         self.rotate_sprite(direction)
