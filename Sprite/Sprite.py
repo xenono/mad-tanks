@@ -54,8 +54,13 @@ class Sprite:
             self.speed_y = self.speed_and_direction[direction]
 
             # Fix Y position caused rectangle sprite
-            if self.current_image_angle == 270:
-                self.position["x"] += 25
+            if direction == "DOWN" and self.current_image_angle == 90:
+                self.position["x"] += 26
+            elif direction == "UP" and self.current_image_angle == 90:
+                self.position["x"] += 26
+                self.position["y"] -= 26
+            elif direction == "UP" and self.current_image_angle == 270:
+                self.position["y"] -= 26
 
             # Swaps sprite dimensions
             if self.current_image_angle == 90 or self.current_image_angle == 270:
@@ -66,8 +71,14 @@ class Sprite:
             self.speed_x = self.speed_and_direction[direction]
 
             # Fix Y position caused rectangle sprite
-            if self.current_image_angle == 180:
-                self.position["y"] += 24
+            if direction == "LEFT" and self.current_image_angle == 180:
+                self.position["x"] -= 26
+            elif direction == "LEFT" and self.current_image_angle == 0:
+                self.position["x"] -= 26
+                self.position["y"] += 26
+
+            if direction == "RIGHT" and self.current_image_angle == 0:
+                self.position["y"] += 26
 
             # Swaps sprite dimensions
             if self.current_image_angle == 180 or self.current_image_angle == 0:

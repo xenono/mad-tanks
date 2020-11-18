@@ -1,6 +1,8 @@
 import pygame
 from SpriteSubclasses.PlayersTank import PlayersTank
 from SpriteSubclasses.EnemyTank import EnemyTank
+from SpriteSubclasses.TankBullet import TankBullet
+from GifAnimation.GifAnimation import GifAnimation
 
 # Pygame setup
 pygame.init()
@@ -16,19 +18,24 @@ pygame.display.set_icon(icon)
 
 # Adds player's tank object
 playersTank = PlayersTank(500, 300, screen)
-enemyTank = EnemyTank(100, 100, screen)
+# Adds enemy's tank object
+# enemyTank = EnemyTank(100, 100, screen)
 # enemyTank.make_decision()
-#
+
+# gifAnimation = GifAnimation("explosion", 24, 0, screen)
+# gifAnimation.load_frames()
 
 # All SpriteSubclasses which are in game alive.
-inGameObjects = [playersTank, enemyTank]
+inGameObjects = [playersTank]
 
 running = True
 while running:
 
     screen.blit(background, (0, 0))
-    playersTank.draw()
-    # enemyTank.draw()
+
+    # Draws every sprite which is in game
+    for sprite in inGameObjects:
+        sprite.draw()
 
     for event in pygame.event.get():
         # Closes the window when pressing X on upper taskbar
@@ -44,6 +51,8 @@ while running:
                 playersTank.move("DOWN")
             elif event.key == pygame.K_UP:
                 playersTank.move("UP")
+            elif event.key == pygame.K_SPACE:
+                playersTank.shoot(inGameObjects)
 
         if event.type == pygame.KEYUP:
             playersTank.stop()
@@ -60,6 +69,6 @@ while running:
             sprite.position["y"] = screenY - sprite.height - borderSize
 
     # Updates sprites and screen
-    playersTank.update()
-    # enemyTank.update()
+    for sprite in inGameObjects:
+        sprite.update()
     pygame.display.update()
