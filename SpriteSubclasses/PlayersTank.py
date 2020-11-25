@@ -29,6 +29,9 @@ class PlayersTank(Sprite):
             return self.position["x"] + self.width, \
                    self.position["y"] + (self.height / 2) - (bullet.height / 2)
 
+    def explode(self, animation_objects):
+        print("exploded", self.position["x"])
+
 
 
 

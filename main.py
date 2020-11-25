@@ -17,16 +17,16 @@ icon = pygame.image.load("assets/player_tank.png")
 pygame.display.set_icon(icon)
 
 # Adds player's tank object
-playersTank = PlayersTank(500, 300, screen)
 # Adds enemy's tank object
 # enemyTank = EnemyTank(100, 100, screen)
 # enemyTank.make_decision()
 
-# gifAnimation = GifAnimation("explosion", 24, 0, screen)
-# gifAnimation.load_frames()
-
 # All SpriteSubclasses which are in game alive.
-inGameObjects = [playersTank]
+inGameObjects = []
+animationObjects = []
+
+playersTank = PlayersTank(500, 300, screen)
+inGameObjects.append(playersTank)
 
 running = True
 while running:
@@ -68,11 +68,18 @@ while running:
         if sprite.position["y"] + sprite.height >= screenY - borderSize:
             sprite.position["y"] = screenY - sprite.height - borderSize
 
-        if not sprite.alive:
-            inGameObjects.remove(sprite)
+
 
 
     # Updates sprites and screen
     for sprite in inGameObjects:
         sprite.update()
+        if not sprite.alive:
+            sprite.explode(animationObjects)
+            inGameObjects.remove(sprite)
+    for animation in animationObjects:
+        animation.update()
+        if animation.is_finished:
+            animationObjects.remove(animation)
+
     pygame.display.update()

@@ -2,7 +2,7 @@ import pygame
 
 
 class GifAnimation:
-    def __init__(self, folder_with_frames, first_frame_number, last_frame_number, screen):
+    def __init__(self, folder_with_frames, first_frame_number, last_frame_number, position_x, position_y, screen):
         self.screen = screen
         self.folder_with_frames = folder_with_frames
         self.first_frame_number = first_frame_number
@@ -11,6 +11,7 @@ class GifAnimation:
         self.frame_counter = 0
         self.is_finished = False
         self.switch_image_delay = 0
+        self.position = (position_x, position_y)
 
     def load_frames(self):
         # Load all frames
@@ -20,7 +21,7 @@ class GifAnimation:
             self.frames.append(pygame.image.load(path))
 
     def play(self):
-        self.screen.blit(self.frames[self.frame_counter], (100, 100))
+        self.screen.blit(self.frames[self.frame_counter], self.position)
         self.switch_image_delay += 1
 
     def update(self):

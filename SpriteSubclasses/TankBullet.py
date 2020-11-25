@@ -1,5 +1,6 @@
 import pygame
 from Sprite.Sprite import Sprite
+from GifAnimation.GifAnimation import GifAnimation
 
 
 # Constant possible direction of movement direction : angle
@@ -21,6 +22,7 @@ class TankBullet(Sprite):
                 self.direction = direction
 
         self.move(self.direction)
+        self.exploded = False
 
     def update(self):
         super().update()
@@ -31,5 +33,11 @@ class TankBullet(Sprite):
             self.alive = False
         if self.position["y"] <= 5 or self.position["y"] + self.height >= self.window_height - 5.5:
             self.alive = False
+
+    def explode(self, animation_objects):
+        if not self.alive:
+            new_gif = GifAnimation("explosion", 24, 0, self.position["x"], self.position["y"], self.screen)
+            new_gif.load_frames()
+            animation_objects.append(new_gif)
 
 
