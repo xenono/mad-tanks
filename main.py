@@ -57,7 +57,7 @@ while running:
         if event.type == pygame.KEYUP:
             playersTank.stop()
 
-    # prevents every sprite to leave game surface borders
+    # prevents every sprite from leaving game surface borders
     for sprite in inGameObjects:
         if sprite.position["x"] <= borderSize:
             sprite.position["x"] = borderSize
@@ -67,6 +67,10 @@ while running:
             sprite.position["y"] = borderSize
         if sprite.position["y"] + sprite.height >= screenY - borderSize:
             sprite.position["y"] = screenY - sprite.height - borderSize
+
+        if not sprite.alive:
+            inGameObjects.remove(sprite)
+
 
     # Updates sprites and screen
     for sprite in inGameObjects:

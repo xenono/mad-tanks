@@ -11,8 +11,10 @@ DIRECTIONS = {
 
 
 class Sprite:
-    def __init__(self, screen, width, height, position_x, position_y, image_link):
+    def __init__(self, screen, width, height, position_x, position_y, image_link, speed=0.7):
         # Sprite's dimensions
+        self.constWidth = width
+        self.constHeight = height
         self.width = width
         self.height = height
         # Holds Sprite's position in dict
@@ -29,12 +31,14 @@ class Sprite:
         self.speed_y = 0
         # Holds current angle of image to rotate when moving
         self.current_image_angle = 0
+        # Status of sprite's life
+        self.alive = True
 
         self.speed_and_direction = {
-            "UP": -0.7,
-            "DOWN": 0.7,
-            "RIGHT": 0.7,
-            "LEFT": -0.7
+            "UP": -speed,
+            "DOWN": speed,
+            "RIGHT": speed,
+            "LEFT": -speed
         }
 
     def draw(self):
@@ -64,7 +68,8 @@ class Sprite:
 
             # Swaps sprite dimensions
             if self.current_image_angle == 90 or self.current_image_angle == 270:
-                self.width, self.height = self.height, self.width
+                self.width = self.constWidth
+                self.height = self.constHeight
 
         elif direction == "RIGHT" or direction == "LEFT":
             # Swap dimensions (sprite is a rectangle)
@@ -81,8 +86,9 @@ class Sprite:
                 self.position["y"] += 26
 
             # Swaps sprite dimensions
-            if self.current_image_angle == 180 or self.current_image_angle == 0:
-                self.width, self.height = self.height, self.width
+            if self.current_image_angle == 0 or self.current_image_angle == 180:
+                self.width = self.constHeight
+                self.height = self.constWidth
 
         # Rotates sprite
         self.rotate_sprite(direction)
