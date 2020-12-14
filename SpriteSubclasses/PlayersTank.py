@@ -5,7 +5,7 @@ from SpriteSubclasses.TankBullet import TankBullet
 
 class PlayersTank(Sprite):
     def __init__(self, position_x, position_y, screen):
-        super().__init__(screen, 50, 76, position_x, position_y, "assets/player_tank.png")
+        super().__init__(screen, 50, 76, position_x, position_y, "assets/player_tank.png", 0.7)
 
     def shoot(self, in_game_objects):
         # Creates and initialize bullet object with position 0,0 to get appropriate dimensions to shoot direction later
