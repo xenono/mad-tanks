@@ -10,7 +10,7 @@ class GifAnimation:
         self.frames = []
         self.frame_counter = 0
         self.is_finished = False
-        self.switch_image_delay = 0
+        self.frame_delay = 0
         self.position = (position_x, position_y)
 
     def load_frames(self):
@@ -22,15 +22,17 @@ class GifAnimation:
 
     def play(self):
         self.screen.blit(self.frames[self.frame_counter], self.position)
-        self.switch_image_delay += 1
+        self.frame_delay += 1
 
     def update(self):
+        # Check if all frames were played
         if self.frame_counter == len(self.frames):
             self.is_finished = True
 
+        # Each frame is played 20 times then it switches to another
         if not self.is_finished:
             self.play()
-            if self.switch_image_delay % 20 == 0:
+            if self.frame_delay % 20 == 0:
                 self.frame_counter += 1
 
 

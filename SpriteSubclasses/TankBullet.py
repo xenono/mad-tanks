@@ -14,7 +14,7 @@ DIRECTIONS = {
 
 class TankBullet(Sprite):
     def __init__(self, position_x, position_y, screen, tank_angle):
-        super().__init__(screen, 10, 30, position_x, position_y, "assets/bullet_10.png", 1.2)
+        super().__init__(screen, 10, 30, position_x, position_y, "assets/bullet_10.png", 1.5)
         self.window_width, self.window_height = pygame.display.get_surface().get_size()
 
         for direction, angle in DIRECTIONS.items():
@@ -36,7 +36,7 @@ class TankBullet(Sprite):
 
     def explode(self, animation_objects):
         if not self.alive:
-            new_gif = GifAnimation("explosion", 24, 0, self.position["x"], self.position["y"], self.screen)
+            new_gif = GifAnimation("explosion_50", 24, 0, self.position["x"] - 25, self.position["y"] - 40, self.screen)
             new_gif.load_frames()
             animation_objects.append(new_gif)
 
