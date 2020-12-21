@@ -1,6 +1,5 @@
 import pygame
 
-
 # Constant possible direction of movement direction : angle
 DIRECTIONS = {
     "UP": 0,
@@ -11,35 +10,79 @@ DIRECTIONS = {
 
 
 class Sprite:
-    def __init__(self, screen, width, height, position_x, position_y, image_link, speed=0.7):
+    def __init__(self, screen, width, height, position_x, position_y, image_link, speed=0.3):
         # Sprite's dimensions
-        self.constWidth = width
-        self.constHeight = height
-        self.width = width
-        self.height = height
+        self.__constWidth = width
+        self.__constHeight = height
+        self.__width = width
+        self.__height = height
         # Holds Sprite's position in dict
-        self.position = {
+        self.__position = {
             "x": position_x,
             "y": position_y
         }
         # Main game screen object
-        self.screen = screen
+        self.__screen = screen
         # Loads Sprite's image
-        self.image = pygame.image.load(image_link)
+        self.__image = pygame.image.load(image_link)
         # Sprite speed values
-        self.speed_x = 0
-        self.speed_y = 0
+        self.__speed_x = 0
+        self.__speed_y = 0
         # Holds current angle of image to rotate when moving
-        self.current_image_angle = 0
+        self.__current_image_angle = 0
         # Status of sprite's life
-        self.alive = True
+        self.__alive = True
 
-        self.speed_and_direction = {
+        self.__speed_and_direction = {
             "UP": -speed,
             "DOWN": speed,
             "RIGHT": speed,
             "LEFT": -speed
         }
+
+    @property
+    def width(self):
+        return self.__width
+
+    @property
+    def height(self):
+        return self.__height
+
+    @property
+    def position(self):
+        return self.__position
+
+    @property
+    def screen(self):
+        return self.__screen
+
+    @property
+    def image(self):
+        return self.__image
+
+    @property
+    def speed_x(self):
+        return self.__speed_x
+
+    @property
+    def speed_y(self):
+        return self.__speed_y
+
+    @property
+    def current_image_angle(self):
+        return self.__current_image_angle
+
+    @property
+    def alive(self):
+        return self.__alive
+
+    @alive.setter
+    def alive(self, value):
+        self.__alive = value
+
+    @property
+    def speed_and_direction(self):
+        return self.__speed_and_direction
 
     def draw(self):
         # Draws sprite on proper position everytime when pygame loop executes
@@ -55,7 +98,7 @@ class Sprite:
     def move(self, direction):
         # Changes speed according to the direction
         if direction == "UP" or direction == "DOWN":
-            self.speed_y = self.speed_and_direction[direction]
+            self.__speed_y = self.speed_and_direction[direction]
 
             # Fix Y position caused rectangle sprite
             if direction == "DOWN" and self.current_image_angle == 90:
@@ -68,12 +111,12 @@ class Sprite:
 
             # Swaps sprite dimensions
             if self.current_image_angle == 90 or self.current_image_angle == 270:
-                self.width = self.constWidth
-                self.height = self.constHeight
+                self.__width = self.__constWidth
+                self.__height = self.__constHeight
 
         elif direction == "RIGHT" or direction == "LEFT":
             # Swap dimensions (sprite is a rectangle)
-            self.speed_x = self.speed_and_direction[direction]
+            self.__speed_x = self.speed_and_direction[direction]
 
             # Fix Y position caused rectangle sprite
             if direction == "LEFT" and self.current_image_angle == 180:
@@ -87,8 +130,8 @@ class Sprite:
 
             # Swaps sprite dimensions
             if self.current_image_angle == 0 or self.current_image_angle == 180:
-                self.width = self.constHeight
-                self.height = self.constWidth
+                self.__width = self.__constHeight
+                self.__height = self.__constWidth
 
         # Rotates sprite
         self.rotate_sprite(direction)
@@ -96,12 +139,12 @@ class Sprite:
     def rotate_sprite(self, destination_direction):
         # rotates image in appropriate direction
         if destination_direction == self.current_image_angle:
-            self.current_image_angle = DIRECTIONS[destination_direction]
+            self.__current_image_angle = DIRECTIONS[destination_direction]
             return
         # Calculates angle difference
         rotate_angle = DIRECTIONS[destination_direction] - self.current_image_angle
-        self.image = pygame.transform.rotate(self.image, rotate_angle)
-        self.current_image_angle = DIRECTIONS[destination_direction]
+        self.__image = pygame.transform.rotate(self.image, rotate_angle)
+        self.__current_image_angle = DIRECTIONS[destination_direction]
 
     def stop(self):
-        self.speed_x = self.speed_y = 0
+        self.__speed_x = self.__speed_y = 0

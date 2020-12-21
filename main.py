@@ -1,6 +1,6 @@
 import pygame
-from SpriteSubclasses.PlayersTank import PlayersTank
-from SpriteSubclasses.EnemyTank import EnemyTank
+from TankSubclasses.Player import Player
+from TankSubclasses.Enemy import Enemy
 from SpriteSubclasses.TankBullet import TankBullet
 from GifAnimation.GifAnimation import GifAnimation
 
@@ -16,17 +16,19 @@ background = pygame.image.load("assets/background.jpg").convert_alpha()
 icon = pygame.image.load("assets/player_tank.png")
 pygame.display.set_icon(icon)
 
-# Adds player's tank object
-# Adds enemy's tank object
-# enemyTank = EnemyTank(100, 100, screen)
-# enemyTank.make_decision()
-
-# All SpriteSubclasses which are in game alive.
-inGameObjects = []
+# All Sprites which are in game alive.
+tanksArray = []
 animationObjects = []
+bulletsArray = []
 
-playersTank = PlayersTank(500, 300, screen)
-inGameObjects.append(playersTank)
+# Initializes objects for game
+enemyTank = Enemy(400, 300, screen, bulletsArray)
+playersTank = Player(500, 300, screen)
+
+# Adds sprites to lists of certain type of sprite
+tanksArray.append(playersTank)
+tanksArray.append(enemyTank)
+enemyTank.make_decision()
 
 running = True
 while running:
@@ -34,13 +36,17 @@ while running:
     screen.blit(background, (0, 0))
 
     # Draws every sprite which is in game
-    for sprite in inGameObjects:
-        sprite.draw()
+    for tank in tanksArray:
+        tank.draw()
+    for bullet in bulletsArray:
+        bullet.draw()
 
     for event in pygame.event.get():
         # Closes the window when pressing X on upper taskbar
         if event.type == pygame.QUIT:
             running = False
+            pygame.quit()
+            break
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
@@ -52,31 +58,49 @@ while running:
             elif event.key == pygame.K_UP:
                 playersTank.move("UP")
             elif event.key == pygame.K_SPACE:
-                playersTank.shoot(inGameObjects)
+                playersTank.shoot(bulletsArray)
 
         if event.type == pygame.KEYUP:
             playersTank.stop()
 
+    # Stops program just after X is clicked
+    if not running:
+        break
+
     # prevents every sprite from leaving game surface borders
-    for sprite in inGameObjects:
-        if sprite.position["x"] <= borderSize:
-            sprite.position["x"] = borderSize
-        if sprite.position["x"] + sprite.width >= screenX - borderSize:
-            sprite.position["x"] = screenX - sprite.width - borderSize
-        if sprite.position["y"] <= borderSize:
-            sprite.position["y"] = borderSize
-        if sprite.position["y"] + sprite.height >= screenY - borderSize:
-            sprite.position["y"] = screenY - sprite.height - borderSize
-
-
-
+    for tank in tanksArray:
+        if tank.position["x"] <= borderSize:
+            tank.position["x"] = borderSize
+        if tank.position["x"] + tank.width >= screenX - borderSize:
+            tank.position["x"] = screenX - tank.width - borderSize
+        if tank.position["y"] <= borderSize:
+            tank.position["y"] = borderSize
+        if tank.position["y"] + tank.height >= screenY - borderSize:
+            tank.position["y"] = screenY - tank.height - borderSize
 
     # Updates sprites and screen
-    for sprite in inGameObjects:
-        sprite.update()
-        if not sprite.alive:
-            sprite.explode(animationObjects)
-            inGameObjects.remove(sprite)
+    for tank in tanksArray:
+        tank.update()
+        if not tank.alive:
+            tank.explode(animationObjects)
+            tanksArray.remove(tank)
+    # Updates bullets position and checks for any collisions with them.
+    for bullet in bulletsArray:
+        bullet.update()
+        if not bullet.alive:
+            bullet.explode(animationObjects)
+            bulletsArray.remove(bullet)
+        else:
+            # Checks whether any alive bullet hit any tank
+            for tank in tanksArray:
+                # Checks position of bullet and particular tank to verify hit
+                hitSpotted = bullet.check_for_hit(tank.width, tank.height, tank.position)
+                if hitSpotted:
+                    # After hitting object bullet explodes and object is destroyed or loses one live point
+                    bullet.alive = False
+                    tanksArray.remove(tank)
+                    tank.explode(animationObjects)
+    # Checks and plays animations in appropriate moments.
     for animation in animationObjects:
         animation.update()
         if animation.is_finished:
