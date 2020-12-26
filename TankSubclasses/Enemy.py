@@ -9,6 +9,8 @@ class Enemy(Tank):
         self.__bullets_array = bullets_array
 
     def make_decision(self):
+        if not self.alive:
+            return
         # Tank makes move every interval passed to threading.Timer
         threading.Timer(1.75, self.make_decision).start()
         # Randomly picks direction for Tank

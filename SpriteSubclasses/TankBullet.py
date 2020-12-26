@@ -35,7 +35,7 @@ class TankBullet(Sprite):
 
     def explode(self, animation_objects):
         if not self.alive:
-            new_gif = GifAnimation("explosion_50", 24, 0, self.position["x"] - 25, self.position["y"] - 40, self.screen)
+            new_gif = GifAnimation("explosion_50", 24, 0, self.position["x"] - 25, self.position["y"] - 40, self.screen, 20)
             new_gif.load_frames()
             animation_objects.append(new_gif)
 

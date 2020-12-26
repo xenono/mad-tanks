@@ -1,6 +1,7 @@
 import pygame
 from Sprite.Sprite import Sprite
 from SpriteSubclasses.TankBullet import TankBullet
+from GifAnimation.GifAnimation import GifAnimation
 
 
 class Tank(Sprite):
@@ -30,7 +31,11 @@ class Tank(Sprite):
                    self.position["y"] + (self.height / 2) - (bullet.height / 2)
 
     def explode(self, animation_objects):
-        print("exploded", self.position["x"])
+        self.die()
+        new_gif = GifAnimation("tank_explosion", 0, 6, self.position["x"] - 25, self.position["y"] - 45, self.screen, 100)
+        new_gif.load_frames()
+        animation_objects.append(new_gif)
+
 
 
 

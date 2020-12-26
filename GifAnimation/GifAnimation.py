@@ -2,7 +2,7 @@ import pygame
 
 
 class GifAnimation:
-    def __init__(self, folder_with_frames, first_frame_number, last_frame_number, position_x, position_y, screen):
+    def __init__(self, folder_with_frames, first_frame_number, last_frame_number, position_x, position_y, screen, frame_interval):
         self.screen = screen
         self.folder_with_frames = folder_with_frames
         self.first_frame_number = first_frame_number
@@ -11,6 +11,7 @@ class GifAnimation:
         self.frame_counter = 0
         self.is_finished = False
         self.frame_delay = 0
+        self.frame_interval = frame_interval
         self.position = (position_x, position_y)
 
     def load_frames(self):
@@ -32,7 +33,7 @@ class GifAnimation:
         # Each frame is played 20 times then it switches to another
         if not self.is_finished:
             self.play()
-            if self.frame_delay % 20 == 0:
+            if self.frame_delay % self.frame_interval == 0:
                 self.frame_counter += 1
 
 

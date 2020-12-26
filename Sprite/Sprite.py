@@ -148,3 +148,6 @@ class Sprite:
 
     def stop(self):
         self.__speed_x = self.__speed_y = 0
+
+    def die(self):
+        self.__alive = False

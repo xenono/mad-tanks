@@ -1,4 +1,4 @@
-import pygame
+import pygame, random
 from TankSubclasses.Player import Player
 from TankSubclasses.Enemy import Enemy
 from SpriteSubclasses.TankBullet import TankBullet
@@ -22,13 +22,17 @@ animationObjects = []
 bulletsArray = []
 
 # Initializes objects for game
-enemyTank = Enemy(400, 300, screen, bulletsArray)
 playersTank = Player(500, 300, screen)
+
+# Adds enemies
+for i in range(3):
+    enemyTank = Enemy(100 * i, 50 * i * random.randint(0,5), screen, bulletsArray)
+    tanksArray.append(enemyTank)
+    enemyTank.make_decision()
 
 # Adds sprites to lists of certain type of sprite
 tanksArray.append(playersTank)
-tanksArray.append(enemyTank)
-enemyTank.make_decision()
+
 
 running = True
 while running:
@@ -45,6 +49,10 @@ while running:
         # Closes the window when pressing X on upper taskbar
         if event.type == pygame.QUIT:
             running = False
+            for tank in tanksArray:
+                tank.die()
+            for bullet in bulletsArray:
+                bullet.die()
             pygame.quit()
             break
 
