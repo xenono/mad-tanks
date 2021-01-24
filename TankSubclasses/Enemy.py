@@ -12,10 +12,11 @@ class Enemy(Tank):
         if not self.alive:
             return
         # Tank makes move every interval passed to threading.Timer
-        threading.Timer(1.75, self.make_decision).start()
+        threading.Timer(random.random() * 3, self.make_decision).start()
         # Randomly picks direction for Tank
         direction = random.choice(list(self.speed_and_direction.keys()))
         self.shoot(self.__bullets_array)
+        self.move(direction)
 
     def update(self):
         super(Enemy, self).update()

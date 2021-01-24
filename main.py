@@ -3,13 +3,12 @@ from TankSubclasses.Player import Player
 from TankSubclasses.Enemy import Enemy
 from SpriteSubclasses.TankBullet import TankBullet
 from GifAnimation.GifAnimation import GifAnimation
+from settings import Settings
 
 # Pygame setup
 pygame.init()
-screenX = 1000
-screenY = 600
-borderSize = 5
-screen = pygame.display.set_mode((screenX, screenY))
+settings = Settings()
+screen = pygame.display.set_mode((settings.screenWidth, settings.screenHeight))
 # Game bar setup
 pygame.display.set_caption("Tanks")
 background = pygame.image.load("assets/background.jpg").convert_alpha()
@@ -22,7 +21,7 @@ animationObjects = []
 bulletsArray = []
 
 # Initializes objects for game
-playersTank = Player(500, 300, screen)
+playersTank = Player(settings.playerStartingPostition["x"], settings.playerStartingPostition["y"], screen)
 
 # Adds enemies
 for i in range(3):
@@ -69,22 +68,25 @@ while running:
                 playersTank.shoot(bulletsArray)
 
         if event.type == pygame.KEYUP:
-            playersTank.stop()
-
-    # Stops program just after X is clicked
-    if not running:
-        break
+            if event.key == pygame.K_LEFT:
+                playersTank.stop("LEFT")
+            elif event.key == pygame.K_RIGHT:
+                playersTank.stop("RIGHT")
+            elif event.key == pygame.K_DOWN:
+                playersTank.stop("DOWN")
+            elif event.key == pygame.K_UP:
+                playersTank.stop("UP")
 
     # prevents every sprite from leaving game surface borders
     for tank in tanksArray:
-        if tank.position["x"] <= borderSize:
-            tank.position["x"] = borderSize
-        if tank.position["x"] + tank.width >= screenX - borderSize:
-            tank.position["x"] = screenX - tank.width - borderSize
-        if tank.position["y"] <= borderSize:
-            tank.position["y"] = borderSize
-        if tank.position["y"] + tank.height >= screenY - borderSize:
-            tank.position["y"] = screenY - tank.height - borderSize
+        if tank.position["x"] <= settings.borderSize:
+            tank.position["x"] = settings.borderSize
+        if tank.position["x"] + tank.width >= settings.screenWidth - settings.borderSize:
+            tank.position["x"] = settings.screenWidth - tank.width - settings.borderSize
+        if tank.position["y"] <= settings.borderSize:
+            tank.position["y"] = settings.borderSize
+        if tank.position["y"] + tank.height >= settings.screenHeight - settings.borderSize:
+            tank.position["y"] = settings.screenHeight - tank.height - settings.borderSize
 
     # Updates sprites and screen
     for tank in tanksArray:
@@ -115,3 +117,6 @@ while running:
             animationObjects.remove(animation)
 
     pygame.display.update()
+
+pygame.quit()
+quit()

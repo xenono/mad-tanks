@@ -2,11 +2,15 @@ import pygame
 from Sprite.Sprite import Sprite
 from SpriteSubclasses.TankBullet import TankBullet
 from GifAnimation.GifAnimation import GifAnimation
+from settings import Settings
+
+settings = Settings()
 
 
 class Tank(Sprite):
     def __init__(self, position_x, position_y, screen):
-        super().__init__(screen, 50, 76, position_x, position_y, "assets/player_tank.png", 0.3)
+        super().__init__(screen, settings.tankWidth, settings.tankHeight, position_x, position_y,
+                         "assets/player_tank.png", settings.tankSpeed)
 
     def shoot(self, bullets_array):
         # Creates and initialize bullet object with position 0,0 to get appropriate dimensions to shoot direction later
@@ -32,12 +36,18 @@ class Tank(Sprite):
 
     def explode(self, animation_objects):
         self.die()
-        new_gif = GifAnimation("tank_explosion", 0, 6, self.position["x"] - 25, self.position["y"] - 45, self.screen, 100)
+        new_gif = GifAnimation("tank_explosion", 0, 6, self.position["x"] - 15,
+                               self.position["y"] - 60, self.screen,
+                               100)
         new_gif.load_frames()
         animation_objects.append(new_gif)
 
-
-
-
-
-
+    def stop(self, direction):
+        if direction == "UP":
+            self.speed_y = 0
+        if direction == "DOWN":
+            self.speed_y = 0
+        if direction == "LEFT":
+            self.speed_x = 0
+        if direction == "RIGHT":
+            self.speed_x = 0

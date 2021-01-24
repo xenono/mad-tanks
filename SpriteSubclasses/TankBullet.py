@@ -1,6 +1,7 @@
 import pygame
 from Sprite.Sprite import Sprite
 from GifAnimation.GifAnimation import GifAnimation
+from settings import Settings
 
 # Constant possible direction of movement direction : angle
 DIRECTIONS = {
@@ -10,10 +11,12 @@ DIRECTIONS = {
     "RIGHT": 270
 }
 
+settings = Settings()
+
 
 class TankBullet(Sprite):
     def __init__(self, position_x, position_y, screen, tank_angle):
-        super().__init__(screen, 10, 30, position_x, position_y, "assets/bullet_10.png", 0.5)
+        super().__init__(screen, settings.bulletWidth, settings.bulletHeight, position_x, position_y, "assets/bullet_10.png", settings.bulletSpeed)
         self.__window_width, self.__window_height = pygame.display.get_surface().get_size()
 
         for direction, angle in DIRECTIONS.items():
