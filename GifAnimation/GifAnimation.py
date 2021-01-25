@@ -2,6 +2,9 @@ import pygame
 
 
 class GifAnimation:
+    """
+        Class which plays GIF files properly. It shows every frame with passed interval.
+    """
     def __init__(self, folder_with_frames, first_frame_number, last_frame_number, position_x, position_y, screen, frame_interval):
         self.screen = screen
         self.folder_with_frames = folder_with_frames
@@ -19,7 +22,7 @@ class GifAnimation:
         step = 1 if self.first_frame_number < self.last_frame_number else -1
         for frame in range(self.first_frame_number, self.last_frame_number + step, step):
             path = "assets/{}/0{:02d}.png".format(self.folder_with_frames, frame)
-            self.frames.append(pygame.image.load(path))
+            self.frames.append(pygame.image.load(path).convert_alpha())
 
     def play(self):
         self.screen.blit(self.frames[self.frame_counter], self.position)

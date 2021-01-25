@@ -8,6 +8,9 @@ settings = Settings()
 
 
 class Tank(Sprite):
+    """
+        This class provides functions and attributes required for player's and enemy's tank sprite.
+    """
     def __init__(self, position_x, position_y, screen):
         super().__init__(screen, settings.tankWidth, settings.tankHeight, position_x, position_y,
                          "assets/player_tank.png", settings.tankSpeed)

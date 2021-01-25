@@ -9,88 +9,44 @@ DIRECTIONS = {
 }
 
 
-class Sprite:
+class Sprite(pygame.sprite.Sprite):
+    """
+        General Sprite class which has shared functions and attributes for every sprites which is on the screen.
+    """
     def __init__(self, screen, width, height, position_x, position_y, image_link, speed=0.3):
+        # Call the parent class (pygame's Sprite) constructor
+        pygame.sprite.Sprite.__init__(self)
         # Sprite's dimensions
-        self.__constWidth = width
-        self.__constHeight = height
-        self.__width = width
-        self.__height = height
+        self.constWidth = width
+        self.constHeight = height
+        self.width = width
+        self.height = height
         # Holds Sprite's position in dict
-        self.__position = {
+        self.position = {
             "x": position_x,
             "y": position_y
         }
         # Main game screen object
-        self.__screen = screen
+        self.screen = screen
         # Loads Sprite's image
-        self.__image = pygame.image.load(image_link)
+        self.image = pygame.image.load(image_link).convert_alpha()
+        # Set position value to rect attribute which is required by pygame Group methods
+        self.rect = self.image.get_rect()
+        self.rect.x, self.rect.y = self.position["x"], self.position["y"]
         # Sprite speed values
-        self.__speed_x = 0
-        self.__speed_y = 0
+        self.speed_x = 0
+        self.speed_y = 0
         # Holds current angle of image to rotate when moving
-        self.__current_image_angle = 0
+        self.current_image_angle = 0
         # Status of sprite's life
-        self.__alive = True
+        self.alive = True
 
-        self.__speed_and_direction = {
+        self.speed_and_direction = {
             "UP": -speed,
             "DOWN": speed,
             "RIGHT": speed,
             "LEFT": -speed
         }
-
-    @property
-    def width(self):
-        return self.__width
-
-    @property
-    def height(self):
-        return self.__height
-
-    @property
-    def position(self):
-        return self.__position
-
-    @property
-    def screen(self):
-        return self.__screen
-
-    @property
-    def image(self):
-        return self.__image
-
-    @property
-    def speed_x(self):
-        return self.__speed_x
-
-    @speed_x.setter
-    def speed_x(self, value):
-        self.__speed_x = value
-
-    @property
-    def speed_y(self):
-        return self.__speed_y
-
-    @speed_y.setter
-    def speed_y(self, value):
-        self.__speed_y = value
-
-    @property
-    def current_image_angle(self):
-        return self.__current_image_angle
-
-    @property
-    def alive(self):
-        return self.__alive
-
-    @alive.setter
-    def alive(self, value):
-        self.__alive = value
-
-    @property
-    def speed_and_direction(self):
-        return self.__speed_and_direction
 
     def draw(self):
         # Draws sprite on proper position everytime when pygame loop executes
@@ -99,15 +55,17 @@ class Sprite:
     def update(self):
         # Updates Sprite's values on game screen everytime when pygame loop executes
         # Moves sprite on x axis
-        self.position["x"] += self.__speed_x
+        self.position["x"] += self.speed_x
         # Moves sprite on Y axis
-        self.position["y"] += self.__speed_y
+        self.position["y"] += self.speed_y
+        # Updates the pygame's position values
+        self.rect.x, self.rect.y = self.position["x"], self.position["y"]
 
     def move(self, direction):
         # Changes speed according to the direction
         if direction == "UP" or direction == "DOWN":
-            self.__speed_y = self.speed_and_direction[direction]
-            self.__speed_x = 0
+            self.speed_y = self.speed_and_direction[direction]
+            self.speed_x = 0
 
             # Fix Y position caused rectangle sprite
             if direction == "DOWN" and self.current_image_angle == 90:
@@ -120,13 +78,13 @@ class Sprite:
 
             # Swaps sprite dimensions
             if self.current_image_angle == 90 or self.current_image_angle == 270:
-                self.__width = self.__constWidth
-                self.__height = self.__constHeight
+                self.width = self.constWidth
+                self.height = self.constHeight
 
         elif direction == "RIGHT" or direction == "LEFT":
             # Swap dimensions (sprite is a rectangle)
-            self.__speed_x = self.speed_and_direction[direction]
-            self.__speed_y = 0
+            self.speed_x = self.speed_and_direction[direction]
+            self.speed_y = 0
 
             # Fix Y position caused rectangle sprite
             if direction == "LEFT" and self.current_image_angle == 180:
@@ -140,8 +98,8 @@ class Sprite:
 
             # Swaps sprite dimensions
             if self.current_image_angle == 0 or self.current_image_angle == 180:
-                self.__width = self.__constHeight
-                self.__height = self.__constWidth
+                self.width = self.constHeight
+                self.height = self.constWidth
 
         # Rotates sprite
         self.rotate_sprite(direction)
@@ -149,15 +107,15 @@ class Sprite:
     def rotate_sprite(self, destination_direction):
         # rotates image in appropriate direction
         if destination_direction == self.current_image_angle:
-            self.__current_image_angle = DIRECTIONS[destination_direction]
+            self.current_image_angle = DIRECTIONS[destination_direction]
             return
         # Calculates angle difference
         rotate_angle = DIRECTIONS[destination_direction] - self.current_image_angle
-        self.__image = pygame.transform.rotate(self.image, rotate_angle)
-        self.__current_image_angle = DIRECTIONS[destination_direction]
+        self.image = pygame.transform.rotate(self.image, rotate_angle)
+        self.current_image_angle = DIRECTIONS[destination_direction]
 
     def stop(self, *args):
-        self.__speed_x = self.__speed_y = 0
+        self.speed_x = self.speed_y = 0
 
     def die(self):
-        self.__alive = False
+        self.alive = False

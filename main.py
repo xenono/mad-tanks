@@ -1,4 +1,4 @@
-import pygame, random
+import pygame, random, time
 from TankSubclasses.Player import Player
 from TankSubclasses.Enemy import Enemy
 from SpriteSubclasses.TankBullet import TankBullet
@@ -11,8 +11,8 @@ settings = Settings()
 screen = pygame.display.set_mode((settings.screenWidth, settings.screenHeight))
 # Game bar setup
 pygame.display.set_caption("Tanks")
-background = pygame.image.load("assets/background.jpg").convert_alpha()
-icon = pygame.image.load("assets/player_tank.png")
+background = pygame.image.load("assets/background.jpg").convert()
+icon = pygame.image.load("assets/player_tank.png").convert()
 pygame.display.set_icon(icon)
 
 # All Sprites which are in game alive.
@@ -25,18 +25,18 @@ playersTank = Player(settings.playerStartingPostition["x"], settings.playerStart
 
 # Adds enemies
 for i in range(3):
-    enemyTank = Enemy(100 * i, 50 * i * random.randint(0,5), screen, bulletsArray)
+    enemyTank = Enemy(200 * i, 200 * i * random.randint(0, 5), screen, bulletsArray)
     tanksArray.append(enemyTank)
     enemyTank.make_decision()
 
 # Adds sprites to lists of certain type of sprite
 tanksArray.append(playersTank)
 
-
 running = True
 while running:
-
     screen.blit(background, (0, 0))
+
+    currentTime = time.time()
 
     # Draws every sprite which is in game
     for tank in tanksArray:
@@ -90,8 +90,9 @@ while running:
 
     # Updates sprites and screen
     for tank in tanksArray:
-        tank.update()
-        if not tank.alive:
+        if tank.alive:
+            tank.update()
+        else:
             tank.explode(animationObjects)
             tanksArray.remove(tank)
     # Updates bullets position and checks for any collisions with them.
