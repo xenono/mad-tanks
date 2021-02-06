@@ -1,4 +1,5 @@
 import pygame
+from settings import Settings
 
 # Constant possible direction of movement direction : angle
 DIRECTIONS = {
@@ -8,11 +9,14 @@ DIRECTIONS = {
     "RIGHT": 270
 }
 
+settings = Settings()
+
 
 class Sprite(pygame.sprite.Sprite):
     """
         General Sprite class which has shared functions and attributes for every sprites which is on the screen.
     """
+
     def __init__(self, screen, width, height, position_x, position_y, image_link, speed=0.3):
         # Call the parent class (pygame's Sprite) constructor
         pygame.sprite.Sprite.__init__(self)

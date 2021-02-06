@@ -1,4 +1,4 @@
-import pygame
+import pygame, math
 from Sprite.Sprite import Sprite
 from SpriteSubclasses.TankBullet import TankBullet
 from GifAnimation.GifAnimation import GifAnimation
@@ -11,9 +11,11 @@ class Tank(Sprite):
     """
         This class provides functions and attributes required for player's and enemy's tank sprite.
     """
+
     def __init__(self, position_x, position_y, screen):
         super().__init__(screen, settings.tankWidth, settings.tankHeight, position_x, position_y,
                          "assets/player_tank.png", settings.tankSpeed)
+        self.gridPosition = [position_x // 200, position_y // 300]
 
     def shoot(self, bullets_array):
         # Creates and initialize bullet object with position 0,0 to get appropriate dimensions to shoot direction later
@@ -54,3 +56,7 @@ class Tank(Sprite):
             self.speed_x = 0
         if direction == "RIGHT":
             self.speed_x = 0
+
+    def update(self):
+        Sprite.update(self)
+        self.gridPosition = [self.position["x"] // 200, self.position["y"] // 300]
