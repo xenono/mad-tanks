@@ -11,27 +11,33 @@ settings = Settings()
 class Game:
     def __init__(self, screen):
         # All Sprites which are in game alive.
-        self.tanksArray = []
+        self.tanksArray = pygame.sprite.Group()
         self.animationObjects = []
-        self.bulletsArray = []
+        self.bulletsArray = pygame.sprite.Group()
         self.screen = screen
 
         # Initializes objects for game
-        self.playersTank = Player(settings.playerStartingPostition["x"], settings.playerStartingPostition["y"], screen)
+        # self.playersTank = Player(settings.playerStartingPostition["x"], settings.playerStartingPostition["y"], screen)
+        self.playersTank = Player(1000, 300, screen)
+        self.playersGrid = self.playersTank.gridPosition
 
         # Sets up interval to create Enemy every certain amount of time
         self.startTime = time.time()
 
         # Adds enemies
-        for i in range(1):
+        for i in range(4):
             position_x = random.randint(70, 1350)
+            # position_x = 700
             position_y = random.randint(70, 840)
+            # position_y = 400
             enemy_tank = Enemy(position_x, position_y, screen, self.bulletsArray)
-            self.tanksArray.append(enemy_tank)
-            enemy_tank.make_decision(False)
+            # self.tanksArray.append(enemy_tank)
+            self.tanksArray.add(enemy_tank)
+            enemy_tank.make_decision(False, self.playersGrid)
 
         # Adds sprites to lists of certain type of sprite
-        self.tanksArray.append(self.playersTank)
+        # self.tanksArray.append(self.playersTank)
+        self.tanksArray.add(self.playersTank)
 
     def draw(self):
         # Draws every sprite which is in game
@@ -81,28 +87,63 @@ class Game:
             position_x = random.randint(70, 1350)
             position_y = random.randint(70, 840)
             enemy_tank = Enemy(position_x, position_y, self.screen, self.bulletsArray)
-            self.tanksArray.append(enemy_tank)
-            enemy_tank.make_decision(False)
+            # self.tanksArray.append(enemy_tank)
+            self.tanksArray.add(enemy_tank)
+            enemy_tank.make_decision(False, self.playersGrid)
 
     def update(self):
         # prevents every sprite from leaving game surface borders
-        for tank in self.tanksArray:
-            if tank.position["x"] <= settings.borderSize:
-                tank.position["x"] = settings.borderSize
-            if tank.position["x"] + tank.width >= settings.screenWidth - settings.borderSize:
-                tank.position["x"] = settings.screenWidth - tank.width - settings.borderSize
-            if tank.position["y"] <= settings.borderSize:
-                tank.position["y"] = settings.borderSize
-            if tank.position["y"] + tank.height >= settings.screenHeight - settings.borderSize:
-                tank.position["y"] = settings.screenHeight - tank.height - settings.borderSize
+        for tank_1 in self.tanksArray:
+            if tank_1.position["x"] <= settings.borderSize:
+                tank_1.position["x"] = settings.borderSize
+            if tank_1.position["x"] + tank_1.width >= settings.screenWidth - settings.borderSize:
+                tank_1.position["x"] = settings.screenWidth - tank_1.width - settings.borderSize
+            if tank_1.position["y"] <= settings.borderSize:
+                tank_1.position["y"] = settings.borderSize
+            if tank_1.position["y"] + tank_1.height >= settings.screenHeight - settings.borderSize:
+                tank_1.position["y"] = settings.screenHeight - tank_1.height - settings.borderSize
+
+            # for tank_2 in self.tanksArray:
+            #     if tank_2 == tank_1:
+            #         continue
+            #     if pygame.sprite.collide_rect(tank_1, tank_2):
+            #         tank_1.speed_x = 0
+            #         tank_1.speed_y = 0
+            #         if tank_1.current_image_angle == 90:
+            #             tank_1.position['x'] = tank_2.position['x'] + tank_2.width + 0.5
+            #         if tank_1.current_image_angle == 270:
+            #             tank_1.position['x'] = tank_2.position['x'] - 0.5
+            #
+            #         if tank_1.current_image_angle == 0:
+            #             tank_1.position['y'] = tank_2.position['y'] + tank_2.height + 0.5
+            #         if tank_1.current_image_angle == 180:
+            #             tank_1.position['y'] = tank_2.position['y'] - 0.5
 
         # Updates sprites and screen
         for tank in self.tanksArray:
+            if tank != self.playersTank:
+                # if self.playersTank.speed_x == tank.speed_x and self.playersTank.speed_y == tank.speed_y:
+                #     print(self)
+                if self.playersTank.position['x'] + self.playersTank.width > tank.position['x'] and self.playersTank.position['x'] < tank.position['x']  + tank.width:
+                    if (tank.position['y'] < self.playersTank.position['y'] < tank.position['y'] + tank.height) or (
+                            tank.position['y'] < self.playersTank.position['y'] + self.playersTank.height < tank.position['y'] + tank.height):
+                        if self.playersTank.current_image_angle == 0:
+                            self.playersTank.position['y'] = tank.height + tank.position['y']
+                        elif self.playersTank.current_image_angle == 180:
+                            self.playersTank.position['y'] = tank.position['y'] - self.playersTank.height
+                        elif self.playersTank.current_image_angle == 270:
+                            self.playersTank.position['x'] = tank.position['x'] - self.playersTank.width
+                        elif self.playersTank.current_image_angle == 90:
+                            self.playersTank.position['x'] = tank.position['x'] + tank.width
             if tank.alive:
-                tank.update()
+                if isinstance(tank,Enemy):
+                    tank.update(self.tanksArray, self.playersGrid)
+                else:
+                    tank.update(self.tanksArray)
             else:
                 tank.explode(self.animationObjects)
                 self.tanksArray.remove(tank)
+
         # Updates bullets position and checks for any collisions with them.
         for bullet in self.bulletsArray:
             bullet.update()
@@ -124,3 +165,6 @@ class Game:
             animation.update()
             if animation.is_finished:
                 self.animationObjects.remove(animation)
+
+        self.playersGrid = self.playersTank.gridPosition
+

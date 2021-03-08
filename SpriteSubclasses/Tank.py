@@ -14,7 +14,7 @@ class Tank(Sprite):
 
     def __init__(self, position_x, position_y, screen):
         super().__init__(screen, settings.tankWidth, settings.tankHeight, position_x, position_y,
-                         "assets/player_tank.png", settings.tankSpeed)
+                         "assets/square.png", settings.tankSpeed)
         self.gridPosition = [position_x // 200, position_y // 300]
 
     def shoot(self, bullets_array):
@@ -22,7 +22,8 @@ class Tank(Sprite):
         new_bullet = TankBullet(0, 0, self.screen, self.current_image_angle)
         bullet_x, bullet_y = self.calculate_bullet_position(new_bullet)
         new_bullet.position["x"], new_bullet.position["y"] = bullet_x, bullet_y
-        bullets_array.append(new_bullet)
+        # bullets_array.append(new_bullet)
+        bullets_array.add(new_bullet)
 
     def calculate_bullet_position(self, bullet):
         # places bullet in correct position to appear near to tank barrel
@@ -57,6 +58,11 @@ class Tank(Sprite):
         if direction == "RIGHT":
             self.speed_x = 0
 
-    def update(self):
+    def update(self, tanks_array, *args):
         Sprite.update(self)
         self.gridPosition = [self.position["x"] // 200, self.position["y"] // 300]
+
+
+
+
+

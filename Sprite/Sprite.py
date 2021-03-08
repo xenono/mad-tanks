@@ -18,8 +18,9 @@ class Sprite(pygame.sprite.Sprite):
     """
 
     def __init__(self, screen, width, height, position_x, position_y, image_link, speed=0.3):
-        # Call the parent class (pygame's Sprite) constructor
+        # Calls constructor of pygame Sprite class.
         pygame.sprite.Sprite.__init__(self)
+
         # Sprite's dimensions
         self.constWidth = width
         self.constHeight = height
@@ -37,6 +38,7 @@ class Sprite(pygame.sprite.Sprite):
         # Set position value to rect attribute which is required by pygame Group methods
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = self.position["x"], self.position["y"]
+
         # Sprite speed values
         self.speed_x = 0
         self.speed_y = 0
@@ -56,7 +58,7 @@ class Sprite(pygame.sprite.Sprite):
         # Draws sprite on proper position everytime when pygame loop executes
         self.screen.blit(self.image, (self.position["x"], self.position["y"]))
 
-    def update(self):
+    def update(self, *args):
         # Updates Sprite's values on game screen everytime when pygame loop executes
         # Moves sprite on x axis
         self.position["x"] += self.speed_x
@@ -83,7 +85,9 @@ class Sprite(pygame.sprite.Sprite):
             # Swaps sprite dimensions
             if self.current_image_angle == 90 or self.current_image_angle == 270:
                 self.width = self.constWidth
+                self.rect.width = self.constWidth
                 self.height = self.constHeight
+                self.rect.height = self.constHeight
 
         elif direction == "RIGHT" or direction == "LEFT":
             # Swap dimensions (sprite is a rectangle)
@@ -103,7 +107,9 @@ class Sprite(pygame.sprite.Sprite):
             # Swaps sprite dimensions
             if self.current_image_angle == 0 or self.current_image_angle == 180:
                 self.width = self.constHeight
+                self.rect.width = self.constHeight
                 self.height = self.constWidth
+                self.rect.height = self.constWidth
 
         # Rotates sprite
         self.rotate_sprite(direction)
