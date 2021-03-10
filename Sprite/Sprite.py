@@ -1,4 +1,4 @@
-import pygame
+import pygame, math
 from settings import Settings
 
 # Constant possible direction of movement direction : angle
@@ -66,6 +66,7 @@ class Sprite(pygame.sprite.Sprite):
         self.position["y"] += self.speed_y
         # Updates the pygame's position values
         self.rect.x, self.rect.y = self.position["x"], self.position["y"]
+        print(self.current_image_angle)
 
     def move(self, direction):
         # Changes speed according to the direction
@@ -75,12 +76,12 @@ class Sprite(pygame.sprite.Sprite):
 
             # Fix Y position caused rectangle sprite
             if direction == "DOWN" and self.current_image_angle == 90:
-                self.position["x"] += 26
+                self.position["x"] += self.height / 2 + 1
             elif direction == "UP" and self.current_image_angle == 90:
-                self.position["x"] += 26
-                self.position["y"] -= 26
+                self.position["x"] += self.height / 2 + 1
+                self.position["y"] -= self.height / 2 + 1
             elif direction == "UP" and self.current_image_angle == 270:
-                self.position["y"] -= 26
+                self.position["y"] -= self.height / 2 + 1
 
             # Swaps sprite dimensions
             if self.current_image_angle == 90 or self.current_image_angle == 270:
@@ -96,13 +97,13 @@ class Sprite(pygame.sprite.Sprite):
 
             # Fix Y position caused rectangle sprite
             if direction == "LEFT" and self.current_image_angle == 180:
-                self.position["x"] -= 26
+                self.position["x"] -= self.width / 2 + 1
             elif direction == "LEFT" and self.current_image_angle == 0:
-                self.position["x"] -= 26
-                self.position["y"] += 26
+                self.position['x'] -= self.width / 2 + 1
+                self.position["y"] += self.width / 2 + 1
 
             if direction == "RIGHT" and self.current_image_angle == 0:
-                self.position["y"] += 26
+                self.position["y"] += self.width / 2 + 1
 
             # Swaps sprite dimensions
             if self.current_image_angle == 0 or self.current_image_angle == 180:

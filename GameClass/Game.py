@@ -25,15 +25,16 @@ class Game:
         self.startTime = time.time()
 
         # Adds enemies
-        for i in range(4):
+        for i in range(10):
             position_x = random.randint(70, 1350)
-            # position_x = 700
+            # position_x = 500
             position_y = random.randint(70, 840)
-            # position_y = 400
+            # position_y = 300
             enemy_tank = Enemy(position_x, position_y, screen, self.bulletsArray)
             # self.tanksArray.append(enemy_tank)
             self.tanksArray.add(enemy_tank)
-            enemy_tank.make_decision(False, self.playersGrid)
+            enemy_tank.make_decision(False)
+
 
         # Adds sprites to lists of certain type of sprite
         # self.tanksArray.append(self.playersTank)
@@ -89,7 +90,7 @@ class Game:
             enemy_tank = Enemy(position_x, position_y, self.screen, self.bulletsArray)
             # self.tanksArray.append(enemy_tank)
             self.tanksArray.add(enemy_tank)
-            enemy_tank.make_decision(False, self.playersGrid)
+            enemy_tank.make_decision(False)
 
     def update(self):
         # prevents every sprite from leaving game surface borders
@@ -121,20 +122,6 @@ class Game:
 
         # Updates sprites and screen
         for tank in self.tanksArray:
-            if tank != self.playersTank:
-                # if self.playersTank.speed_x == tank.speed_x and self.playersTank.speed_y == tank.speed_y:
-                #     print(self)
-                if self.playersTank.position['x'] + self.playersTank.width > tank.position['x'] and self.playersTank.position['x'] < tank.position['x']  + tank.width:
-                    if (tank.position['y'] < self.playersTank.position['y'] < tank.position['y'] + tank.height) or (
-                            tank.position['y'] < self.playersTank.position['y'] + self.playersTank.height < tank.position['y'] + tank.height):
-                        if self.playersTank.current_image_angle == 0:
-                            self.playersTank.position['y'] = tank.height + tank.position['y']
-                        elif self.playersTank.current_image_angle == 180:
-                            self.playersTank.position['y'] = tank.position['y'] - self.playersTank.height
-                        elif self.playersTank.current_image_angle == 270:
-                            self.playersTank.position['x'] = tank.position['x'] - self.playersTank.width
-                        elif self.playersTank.current_image_angle == 90:
-                            self.playersTank.position['x'] = tank.position['x'] + tank.width
             if tank.alive:
                 if isinstance(tank,Enemy):
                     tank.update(self.tanksArray, self.playersGrid)
@@ -153,6 +140,8 @@ class Game:
             else:
                 # Checks whether any alive bullet hit any tank
                 for tank in self.tanksArray:
+                    if isinstance(tank, Enemy) and isinstance(bullet.shooter, Enemy):
+                        continue
                     # Checks position of bullet and particular tank to verify hit
                     hit_spotted = bullet.check_for_hit(tank.width, tank.height, tank.position)
                     if hit_spotted:

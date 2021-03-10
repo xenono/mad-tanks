@@ -14,12 +14,12 @@ class Tank(Sprite):
 
     def __init__(self, position_x, position_y, screen):
         super().__init__(screen, settings.tankWidth, settings.tankHeight, position_x, position_y,
-                         "assets/square.png", settings.tankSpeed)
+                         "assets/T-34.png", settings.tankSpeed)
         self.gridPosition = [position_x // 200, position_y // 300]
 
     def shoot(self, bullets_array):
         # Creates and initialize bullet object with position 0,0 to get appropriate dimensions to shoot direction later
-        new_bullet = TankBullet(0, 0, self.screen, self.current_image_angle)
+        new_bullet = TankBullet(0, 0, self.screen, self.current_image_angle, self)
         bullet_x, bullet_y = self.calculate_bullet_position(new_bullet)
         new_bullet.position["x"], new_bullet.position["y"] = bullet_x, bullet_y
         # bullets_array.append(new_bullet)

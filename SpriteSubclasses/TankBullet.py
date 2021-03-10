@@ -15,10 +15,10 @@ settings = Settings()
 
 
 class TankBullet(Sprite):
-    def __init__(self, position_x, position_y, screen, tank_angle):
+    def __init__(self, position_x, position_y, screen, tank_angle, shooter):
         super().__init__(screen, settings.bulletWidth, settings.bulletHeight, position_x, position_y, "assets/bullet_10.png", settings.bulletSpeed)
         self.__window_width, self.__window_height = pygame.display.get_surface().get_size()
-
+        self.shooter = shooter
         for direction, angle in DIRECTIONS.items():
             if angle == tank_angle:
                 self.direction = direction
