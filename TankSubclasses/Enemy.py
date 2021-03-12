@@ -11,7 +11,7 @@ class Enemy(Tank):
     def __init__(self, position_x, position_y, screen, bullets_array):
         super().__init__(position_x, position_y, screen)
 
-        self.image = pygame.image.load("assets/T-34.png").convert_alpha()
+        self.image = pygame.image.load("assets/Tiger.png").convert_alpha()
 
         self.decision_delay = 0
         self.bullets_array = bullets_array
@@ -25,13 +25,10 @@ class Enemy(Tank):
         self.isMoving = False
         self.possibleDirections = {"UP": True, "DOWN": True, "LEFT": True, "RIGHT": True}
 
-    def make_decision(self, is_on_border, is_on_object=False):
+    def make_decision(self, is_on_object):
         if not self.alive:
             return
 
-        if is_on_border:
-            self.choose_path_randomly()
-            return
         if is_on_object:
             self.choose_path_randomly()
             return
@@ -101,25 +98,25 @@ class Enemy(Tank):
                             # self.position['y'] = tank.height + tank.position['y']
                             self.speed_y = 0
                             self.possibleDirections["UP"] = False
-                            self.make_decision(False, True)
+                            self.make_decision(True)
                             return
                         elif self.current_image_angle == 180:
                             # self.position['y'] = tank.position['y'] - self.height
                             self.speed_y = 0
                             self.possibleDirections["DOWN"] = False
-                            self.make_decision(False, True)
+                            self.make_decision(True)
                             return
                         elif self.current_image_angle == 270:
                             self.speed_x = 0
                             self.possibleDirections["RIGHT"] = False
-                            self.make_decision(False, True)
+                            self.make_decision(True)
                             return
                             # self.position['x'] = tank.position['x'] - self.width
                         elif self.current_image_angle == 90:
                             # self.position['x'] = tank.position['x'] + tank.width
                             self.speed_x = 0
                             self.possibleDirections["LEFT"] = False
-                            self.make_decision(False, True)
+                            self.make_decision(True)
                             return
 
         self.make_decision(False)

@@ -16,6 +16,7 @@ class Tank(Sprite):
         super().__init__(screen, settings.tankWidth, settings.tankHeight, position_x, position_y,
                          "assets/T-34.png", settings.tankSpeed)
         self.gridPosition = [position_x // 200, position_y // 300]
+        self.health = 3
 
     def shoot(self, bullets_array):
         # Creates and initialize bullet object with position 0,0 to get appropriate dimensions to shoot direction later
@@ -23,7 +24,7 @@ class Tank(Sprite):
         bullet_x, bullet_y = self.calculate_bullet_position(new_bullet)
         new_bullet.position["x"], new_bullet.position["y"] = bullet_x, bullet_y
         # bullets_array.append(new_bullet)
-        bullets_array.add(new_bullet)
+        bullets_array.append(new_bullet)
 
     def calculate_bullet_position(self, bullet):
         # places bullet in correct position to appear near to tank barrel
@@ -47,6 +48,9 @@ class Tank(Sprite):
                                100)
         new_gif.load_frames()
         animation_objects.append(new_gif)
+        
+    def get_shot(self):
+        self.health -= 1
 
     def stop(self, direction):
         if direction == "UP":
@@ -58,7 +62,7 @@ class Tank(Sprite):
         if direction == "RIGHT":
             self.speed_x = 0
 
-    def update(self, tanks_array, *args):
+    def update(self, tanks_array):
         Sprite.update(self)
         self.gridPosition = [self.position["x"] // 200, self.position["y"] // 300]
 

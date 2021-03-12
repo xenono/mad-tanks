@@ -12,7 +12,7 @@ DIRECTIONS = {
 settings = Settings()
 
 
-class Sprite(pygame.sprite.Sprite):
+class Sprite():
     """
         General Sprite class which has shared functions and attributes for every sprites which is on the screen.
     """
@@ -66,7 +66,6 @@ class Sprite(pygame.sprite.Sprite):
         self.position["y"] += self.speed_y
         # Updates the pygame's position values
         self.rect.x, self.rect.y = self.position["x"], self.position["y"]
-        print(self.current_image_angle)
 
     def move(self, direction):
         # Changes speed according to the direction

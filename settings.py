@@ -14,10 +14,15 @@ class Settings:
         self.tankHeight = 77
         self.tankSpeed = 0.2
 
+        # Player settings
+
+        self.playersHealthNumber = 3
+        self.playersShootCooldown = 2
+
         # Bullet settings
-        self.bulletWidth = 10
-        self.bulletHeight = 30
-        self.bulletSpeed = 0.25
+        self.bulletWidth = 5
+        self.bulletHeight = 15
+        self.bulletSpeed = 1
 
         # Player settings
         self.playerStartingPostition = {

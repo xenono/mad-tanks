@@ -3,6 +3,8 @@ from TankSubclasses.Player import Player
 from TankSubclasses.Enemy import Enemy
 from SpriteSubclasses.TankBullet import TankBullet
 from GifAnimation.GifAnimation import GifAnimation
+from StaticSprite.StaticSprite import StaticSprite
+from utils.CollisionDetection import CollisionDetection
 from settings import Settings
 
 settings = Settings()
@@ -11,13 +13,13 @@ settings = Settings()
 class Game:
     def __init__(self, screen):
         # All Sprites which are in game alive.
-        self.tanksArray = pygame.sprite.Group()
+        self.tanksArray = []
         self.animationObjects = []
-        self.bulletsArray = pygame.sprite.Group()
+        self.bulletsArray = []
+        self.buildingsArray = []
         self.screen = screen
 
         # Initializes objects for game
-        # self.playersTank = Player(settings.playerStartingPostition["x"], settings.playerStartingPostition["y"], screen)
         self.playersTank = Player(1000, 300, screen)
         self.playersGrid = self.playersTank.gridPosition
 
@@ -25,20 +27,21 @@ class Game:
         self.startTime = time.time()
 
         # Adds enemies
-        for i in range(10):
+        for i in range(1):
             position_x = random.randint(70, 1350)
             # position_x = 500
             position_y = random.randint(70, 840)
             # position_y = 300
             enemy_tank = Enemy(position_x, position_y, screen, self.bulletsArray)
-            # self.tanksArray.append(enemy_tank)
-            self.tanksArray.add(enemy_tank)
-            enemy_tank.make_decision(False)
+            self.tanksArray.append(enemy_tank)
 
+        # Adds buildings
+        building_1 = StaticSprite(screen, 500, 500, "assets/Group 8.png")
+        self.buildingsArray.append(building_1)
 
         # Adds sprites to lists of certain type of sprite
         # self.tanksArray.append(self.playersTank)
-        self.tanksArray.add(self.playersTank)
+        self.tanksArray.append(self.playersTank)
 
     def draw(self):
         # Draws every sprite which is in game
@@ -46,6 +49,8 @@ class Game:
             tank.draw()
         for bullet in self.bulletsArray:
             bullet.draw()
+        for building in self.buildingsArray:
+            building.draw()
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -69,7 +74,10 @@ class Game:
                 elif event.key == pygame.K_UP:
                     self.playersTank.move("UP")
                 elif event.key == pygame.K_SPACE:
-                    self.playersTank.shoot(self.bulletsArray)
+                    if self.playersTank.canShoot:
+                        self.playersTank.shoot(self.bulletsArray)
+                    else:
+                        print("Cooldown")
 
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
@@ -89,7 +97,7 @@ class Game:
             position_y = random.randint(70, 840)
             enemy_tank = Enemy(position_x, position_y, self.screen, self.bulletsArray)
             # self.tanksArray.append(enemy_tank)
-            self.tanksArray.add(enemy_tank)
+            self.tanksArray.append(enemy_tank)
             enemy_tank.make_decision(False)
 
     def update(self):
@@ -104,26 +112,10 @@ class Game:
             if tank_1.position["y"] + tank_1.height >= settings.screenHeight - settings.borderSize:
                 tank_1.position["y"] = settings.screenHeight - tank_1.height - settings.borderSize
 
-            # for tank_2 in self.tanksArray:
-            #     if tank_2 == tank_1:
-            #         continue
-            #     if pygame.sprite.collide_rect(tank_1, tank_2):
-            #         tank_1.speed_x = 0
-            #         tank_1.speed_y = 0
-            #         if tank_1.current_image_angle == 90:
-            #             tank_1.position['x'] = tank_2.position['x'] + tank_2.width + 0.5
-            #         if tank_1.current_image_angle == 270:
-            #             tank_1.position['x'] = tank_2.position['x'] - 0.5
-            #
-            #         if tank_1.current_image_angle == 0:
-            #             tank_1.position['y'] = tank_2.position['y'] + tank_2.height + 0.5
-            #         if tank_1.current_image_angle == 180:
-            #             tank_1.position['y'] = tank_2.position['y'] - 0.5
-
         # Updates sprites and screen
         for tank in self.tanksArray:
             if tank.alive:
-                if isinstance(tank,Enemy):
+                if isinstance(tank, Enemy):
                     tank.update(self.tanksArray, self.playersGrid)
                 else:
                     tank.update(self.tanksArray)
@@ -147,13 +139,30 @@ class Game:
                     if hit_spotted:
                         # After hitting object bullet explodes and object is destroyed or loses one live point
                         bullet.alive = False
-                        self.tanksArray.remove(tank)
-                        tank.explode(self.animationObjects)
+                        tank.get_shot()
+                        if tank.health == 0:
+                            self.tanksArray.remove(tank)
+                            tank.explode(self.animationObjects)
+                for building in self.buildingsArray:
+                    hit_spotted = CollisionDetection.collision(bullet, building)
+                    if hit_spotted:
+                        bullet.alive = False
+
+        # Checks for tank collisions with building
+        for tank in self.tanksArray:
+            for building in self.buildingsArray:
+                if CollisionDetection.collision(tank, building):
+                    CollisionDetection.position_tank_relatively_to_moving_direction(tank, building)
+                    if isinstance(tank, Enemy):
+                        tank.make_decision(True)
+
         # Checks and plays animations in appropriate moments.
         for animation in self.animationObjects:
             animation.update()
             if animation.is_finished:
                 self.animationObjects.remove(animation)
 
-        self.playersGrid = self.playersTank.gridPosition
+        for building in self.buildingsArray:
+            building.update()
 
+        self.playersGrid = self.playersTank.gridPosition

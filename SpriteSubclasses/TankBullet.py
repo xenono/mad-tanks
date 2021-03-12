@@ -16,7 +16,7 @@ settings = Settings()
 
 class TankBullet(Sprite):
     def __init__(self, position_x, position_y, screen, tank_angle, shooter):
-        super().__init__(screen, settings.bulletWidth, settings.bulletHeight, position_x, position_y, "assets/bullet_10.png", settings.bulletSpeed)
+        super().__init__(screen, settings.bulletWidth, settings.bulletHeight, position_x, position_y, "assets/missile.png", settings.bulletSpeed)
         self.__window_width, self.__window_height = pygame.display.get_surface().get_size()
         self.shooter = shooter
         for direction, angle in DIRECTIONS.items():
@@ -42,9 +42,9 @@ class TankBullet(Sprite):
             new_gif.load_frames()
             animation_objects.append(new_gif)
 
-    def check_for_hit(self, tank_width, tank_height, tank_position):
-        tank_x, tank_y = tank_position["x"], tank_position["y"]
-        if (tank_x + tank_width) >= self.position["x"] >= tank_x:
-            if tank_y <= self.position["y"] <= (tank_y + tank_height):
+    def check_for_hit(self, object_width, object_height, object_position):
+        object_x, object_y = object_position["x"], object_position["y"]
+        if (object_x + object_width) >= self.position["x"] >= object_x:
+            if object_y <= self.position["y"] <= (object_y + object_height):
                 return True
         return False
