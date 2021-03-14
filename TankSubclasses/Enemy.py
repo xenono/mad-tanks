@@ -81,7 +81,7 @@ class Enemy(Tank):
         current_time = time.time()
         if not current_time - self.attack_timer >= 2:
             return
-        # Checks each side to attack player if he is not more than 250 pixels away
+        # Checks each side to attack player if he is closer than 250 pixels away
         # Right and Left side
         if self.position["y"] + self.height - 25 >= player_y >= self.position["y"] - 20:
             # Right Side

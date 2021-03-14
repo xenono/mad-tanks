@@ -28,26 +28,26 @@ class Game:
 
 
         # Creates levels
-        base_path = os.path.abspath(os.getcwd())
-        for file_name in os.listdir(os.path.join(base_path, "levels")):
-            file_path = os.path.join(base_path, "levels", file_name)
-            with open(file_path) as file:
-                data = json.load(file)
-
-                # # Adds buildings
-                for building in data['buildings']:
-                    building_object = StaticSprite(screen, building["x"], building["y"], "assets/" + building["type"] + ".png")
-                    self.buildingsArray.append(building_object)
-
-                # Adds enemies
-                for tank_data in data['enemies']:
-                # for i in range(3):
-                    position_x = tank_data["x"]
-                    # position_x = 500
-                    position_y = tank_data["y"]
-                    # position_y = 400
-                    enemy_tank = Enemy(position_x, position_y, screen, self.bulletsArray)
-                    self.tanksArray.append(enemy_tank)
+        # base_path = os.path.abspath(os.getcwd())
+        # for file_name in os.listdir(os.path.join(base_path, "levels")):
+        #     file_path = os.path.join(base_path, "levels", file_name)
+        #     with open(file_path) as file:
+        #         data = json.load(file)
+        #
+        #         # # Adds buildings
+        #         for building in data['buildings']:
+        #             building_object = StaticSprite(screen, building["x"], building["y"], "assets/" + building["type"] + ".png")
+        #             self.buildingsArray.append(building_object)
+        #
+        #         # Adds enemies
+        #         for tank_data in data['enemies']:
+        #         # for i in range(3):
+        #             position_x = tank_data["x"]
+        #             # position_x = 500
+        #             position_y = tank_data["y"]
+        #             # position_y = 400
+        #             enemy_tank = Enemy(position_x, position_y, screen, self.bulletsArray)
+        #             self.tanksArray.append(enemy_tank)
 
         # building_1 = StaticSprite(screen, 500, 500, "assets/Group 8.png")
         # self.buildingsArray.append(building_1)
@@ -177,4 +177,6 @@ class Game:
 
         for building in self.buildingsArray:
             building.update()
+
+
 
