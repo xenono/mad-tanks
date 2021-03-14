@@ -1,4 +1,4 @@
-import pygame, random, time
+import pygame, random, time,os, json
 from TankSubclasses.Player import Player
 from TankSubclasses.Enemy import Enemy
 from SpriteSubclasses.TankBullet import TankBullet
@@ -21,23 +21,36 @@ class Game:
 
         # Initializes objects for game
         self.playersTank = Player(1000, 300, screen)
-        self.playersGrid = self.playersTank.gridPosition
 
         # Sets up interval to create Enemy every certain amount of time
         self.startTime = time.time()
 
-        # Adds enemies
-        for i in range(1):
-            position_x = random.randint(70, 1350)
-            # position_x = 500
-            position_y = random.randint(70, 840)
-            # position_y = 300
-            enemy_tank = Enemy(position_x, position_y, screen, self.bulletsArray)
-            self.tanksArray.append(enemy_tank)
 
-        # Adds buildings
-        building_1 = StaticSprite(screen, 500, 500, "assets/Group 8.png")
-        self.buildingsArray.append(building_1)
+
+        # Creates levels
+        base_path = os.path.abspath(os.getcwd())
+        for file_name in os.listdir(os.path.join(base_path, "levels")):
+            file_path = os.path.join(base_path, "levels", file_name)
+            with open(file_path) as file:
+                data = json.load(file)
+
+                # # Adds buildings
+                for building in data['buildings']:
+                    building_object = StaticSprite(screen, building["x"], building["y"], "assets/" + building["type"] + ".png")
+                    self.buildingsArray.append(building_object)
+
+                # Adds enemies
+                for tank_data in data['enemies']:
+                # for i in range(3):
+                    position_x = tank_data["x"]
+                    # position_x = 500
+                    position_y = tank_data["y"]
+                    # position_y = 400
+                    enemy_tank = Enemy(position_x, position_y, screen, self.bulletsArray)
+                    self.tanksArray.append(enemy_tank)
+
+        # building_1 = StaticSprite(screen, 500, 500, "assets/Group 8.png")
+        # self.buildingsArray.append(building_1)
 
         # Adds sprites to lists of certain type of sprite
         # self.tanksArray.append(self.playersTank)
@@ -116,7 +129,7 @@ class Game:
         for tank in self.tanksArray:
             if tank.alive:
                 if isinstance(tank, Enemy):
-                    tank.update(self.tanksArray, self.playersGrid)
+                    tank.update(self.tanksArray, self.playersTank)
                 else:
                     tank.update(self.tanksArray)
             else:
@@ -165,4 +178,3 @@ class Game:
         for building in self.buildingsArray:
             building.update()
 
-        self.playersGrid = self.playersTank.gridPosition

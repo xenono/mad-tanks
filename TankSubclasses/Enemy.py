@@ -18,6 +18,7 @@ class Enemy(Tank):
         # Start decision timer
         self.movingTimer = time.time()
         self.shootingTimer = time.time()
+        self.attack_timer = time.time()
         # Break between making decisions
         self.movingInterval = 0
         self.shootingInterval = 0
@@ -26,6 +27,7 @@ class Enemy(Tank):
         self.possibleDirections = {"UP": True, "DOWN": True, "LEFT": True, "RIGHT": True}
 
     def make_decision(self, is_on_object):
+        # pass
         if not self.alive:
             return
 
@@ -66,7 +68,50 @@ class Enemy(Tank):
             self.speed_y = 0
             self.die()
 
-    def update(self, tanks_array, players_grid):
+    def attack_direction(self, direction):
+        self.move(direction)
+        self.shoot(self.bullets_array)
+        self.make_decision(True)
+
+    # def attack_player(self, player):
+
+    def player_in_range(self, player):
+        player_x = player.position["x"]
+        player_y = player.position["y"]
+        current_time = time.time()
+        if not current_time - self.attack_timer >= 2:
+            return
+        # Checks each side to attack player if he is not more than 250 pixels away
+        # Right and Left side
+        if self.position["y"] + self.height - 25 >= player_y >= self.position["y"] - 20:
+            # Right Side
+            if player_x - self.position["x"] - self.width <= 250 and \
+                    player_x + player.width > self.position["x"] + self.width:
+                self.attack_direction("RIGHT")
+                self.attack_timer = time.time()
+        #     # Left Side
+            elif self.position["x"] - player_x - player.width <= 250 and \
+                    self.position["x"] > player_x + player.width:
+                self.attack_direction("LEFT")
+                self.attack_timer = time.time()
+        # Checks Upper and down side
+        elif self.position["x"] + 5 <= player_x <= self.position["x"] + self.width - 5 or \
+                self.position["x"] + 5 <= player_x + player.width <= self.position["x"] + self.width - 5:
+            # Upper side
+            if self.position["y"] - player_y - player.height <= 250 and \
+                 self.position["y"] > player_y + player.height:
+                self.attack_direction("UP")
+                self.attack_timer = time.time()
+                print("attack")
+            # Down side
+            if player_y - self.position["y"] - self.height <= 250 and \
+                    player_y + player.height > self.position["y"] + self.height:
+                self.attack_direction("DOWN")
+                self.attack_timer = time.time()
+                print("attack")
+
+
+    def update(self, tanks_array, player):
         Tank.update(self, tanks_array)
 
         # Triggers make_decision when object collides with walls
@@ -88,10 +133,11 @@ class Enemy(Tank):
         else:
             self.possibleDirections = self.possibleDirections.fromkeys(self.possibleDirections, True)
 
+        # Collision with other tanks and buildings
         for tank in tanks_array:
             if tank != self:
-                if self.position['x'] + self.width >= tank.position['x'] and self.position['x'] <= tank.position[
-                    'x'] + tank.width:
+                if self.position['x'] + self.width >= tank.position['x'] and \
+                        self.position['x'] <= tank.position['x'] + tank.width:
                     if (tank.position['y'] <= self.position['y'] < tank.position['y'] + tank.height) or (
                             tank.position['y'] <= self.position['y'] + self.height < tank.position['y'] + tank.height):
                         if self.current_image_angle == 0:
@@ -118,5 +164,8 @@ class Enemy(Tank):
                             self.possibleDirections["LEFT"] = False
                             self.make_decision(True)
                             return
+
+        # Checks if player is in range to attack
+        self.player_in_range(player)
 
         self.make_decision(False)
