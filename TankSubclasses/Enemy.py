@@ -79,18 +79,16 @@ class Enemy(Tank):
         player_x = player.position["x"]
         player_y = player.position["y"]
         current_time = time.time()
-        if not current_time - self.attack_timer >= 2:
+        if not current_time - self.attack_timer >= 2.75:
             return
         # Checks each side to attack player if he is closer than 250 pixels away
         # Right and Left side
         if self.position["y"] + self.height - 25 >= player_y >= self.position["y"] - 20:
-            # Right Side
-            if player_x - self.position["x"] - self.width <= 250 and \
+            if player_x - self.position["x"] - self.width <= settings.screenWidth and \
                     player_x + player.width > self.position["x"] + self.width:
                 self.attack_direction("RIGHT")
                 self.attack_timer = time.time()
-        #     # Left Side
-            elif self.position["x"] - player_x - player.width <= 250 and \
+            elif self.position["x"] - player_x - player.width <= settings.screenWidth and \
                     self.position["x"] > player_x + player.width:
                 self.attack_direction("LEFT")
                 self.attack_timer = time.time()
@@ -98,18 +96,15 @@ class Enemy(Tank):
         elif self.position["x"] + 5 <= player_x <= self.position["x"] + self.width - 5 or \
                 self.position["x"] + 5 <= player_x + player.width <= self.position["x"] + self.width - 5:
             # Upper side
-            if self.position["y"] - player_y - player.height <= 250 and \
-                 self.position["y"] > player_y + player.height:
+            if self.position["y"] - player_y - player.height <= settings.screenHeight and \
+                    self.position["y"] > player_y + player.height:
                 self.attack_direction("UP")
                 self.attack_timer = time.time()
-                print("attack")
             # Down side
-            if player_y - self.position["y"] - self.height <= 250 and \
+            elif player_y - self.position["y"] - self.height <= settings.screenHeight and \
                     player_y + player.height > self.position["y"] + self.height:
                 self.attack_direction("DOWN")
                 self.attack_timer = time.time()
-                print("attack")
-
 
     def update(self, tanks_array, player):
         Tank.update(self, tanks_array)

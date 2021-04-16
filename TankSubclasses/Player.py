@@ -26,7 +26,7 @@ class Player(Tank):
         y = self.position["y"] - 15
 
         loading_percentage = abs(self.shotCoolDownTimeCounter - time.time()) / 2
-        bar_color = (255,0,0)
+        bar_color = (255, 0, 0)
         if self.canShoot is False:
             rectangle = pygame.Rect(x, y, loading_percentage * 60, 2.5)
             pygame.draw.rect(self.screen, bar_color, rectangle)
