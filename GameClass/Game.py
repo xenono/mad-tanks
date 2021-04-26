@@ -19,6 +19,12 @@ class Game:
         self.buildingsArray = []
         self.screen = screen
 
+        # All animations frames
+        self. animations = {
+            "bulletExplosion": GifAnimation.load_frames(24, 0, "explosion_50"),
+            "tankExplosion": GifAnimation.load_frames(0, 6, "tank_explosion"),
+        }
+
         # Initializes objects for game
         self.playersTank = Player(1000, 300, screen)
 
@@ -123,14 +129,14 @@ class Game:
                 else:
                     tank.update(self.tanksArray)
             else:
-                tank.explode(self.animationObjects)
+                tank.explode(self.animations["tankExplosion"], self.animationObjects)
                 self.tanksArray.remove(tank)
 
         # Updates bullets position and checks for any collisions with them.
         for bullet in self.bulletsArray:
             bullet.update()
             if not bullet.alive:
-                bullet.explode(self.animationObjects)
+                bullet.explode(self.animations["bulletExplosion"], self.animationObjects)
                 self.bulletsArray.remove(bullet)
             else:
                 # Checks whether any alive bullet hit any tank
@@ -145,7 +151,7 @@ class Game:
                         tank.get_shot()
                         if tank.health == 0:
                             self.tanksArray.remove(tank)
-                            tank.explode(self.animationObjects)
+                            tank.explode(self.animations["tankExplosion"], self.animationObjects)
                 for building in self.buildingsArray:
                     hit_spotted = CollisionDetection.collision(bullet, building)
                     if hit_spotted:

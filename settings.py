@@ -12,7 +12,7 @@ class Settings:
         # Tank settings
         self.tankWidth = 40
         self.tankHeight = 77
-        self.tankSpeed = 0.2
+        self.tankSpeed = 1.3
 
         # Player settings
 
@@ -22,7 +22,7 @@ class Settings:
         # Bullet settings
         self.bulletWidth = 5
         self.bulletHeight = 15
-        self.bulletSpeed = 1
+        self.bulletSpeed = 2.8
 
         # Player settings
         self.playerStartingPostition = {

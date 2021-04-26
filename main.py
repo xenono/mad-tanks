@@ -21,6 +21,9 @@ gameObject = Game(screen)
 # Game Status
 running = True
 
+clock = pygame.time.Clock()
+
+
 while running:
     screen.blit(background, (0, 0))
 
@@ -28,7 +31,7 @@ while running:
     gameObject.handle_events()
 
     gameObject.update()
-
+    clock.tick(120)
     pygame.display.update()
 
 pygame.quit()

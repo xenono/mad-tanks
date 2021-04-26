@@ -36,10 +36,9 @@ class TankBullet(Sprite):
         if self.position["y"] <= 5 or self.position["y"] + self.height >= self.__window_height - 5.5:
             self.alive = False
 
-    def explode(self, animation_objects):
+    def explode(self, frames, animation_objects):
         if not self.alive:
-            new_gif = GifAnimation("explosion_50", 24, 0, self.position["x"] - 25, self.position["y"] - 40, self.screen, 20)
-            new_gif.load_frames()
+            new_gif = GifAnimation(frames, self.position["x"] - 25, self.position["y"] - 40, self.screen, 10)
             animation_objects.append(new_gif)
 
     def check_for_hit(self, object_width, object_height, object_position):

@@ -41,14 +41,11 @@ class Tank(Sprite):
             return self.position["x"] + self.width, \
                    self.position["y"] + (self.height / 2) - (bullet.height / 2)
 
-    def explode(self, animation_objects):
+    def explode(self, frames, animation_objects):
         self.die()
-        new_gif = GifAnimation("tank_explosion", 0, 6, self.position["x"] - 15,
-                               self.position["y"] - 60, self.screen,
-                               100)
-        new_gif.load_frames()
+        new_gif = GifAnimation(frames, self.position["x"] - 15, self.position["y"] - 60, self.screen, 15)
         animation_objects.append(new_gif)
-        
+
     def get_shot(self):
         self.health -= 1
 
@@ -65,8 +62,3 @@ class Tank(Sprite):
     def update(self, tanks_array):
         Sprite.update(self)
         self.gridPosition = [self.position["x"] // 200, self.position["y"] // 300]
-
-
-
-
-
