@@ -12,7 +12,8 @@ settings = Settings()
 screen = pygame.display.set_mode((settings.screenWidth, settings.screenHeight))
 # Game bar setup
 pygame.display.set_caption("Tanks")
-background = pygame.image.load("assets/background.jpg").convert()
+gameBackground = pygame.image.load("assets/background.jpg").convert()
+menuBackground = pygame.image.load("assets/t-34Background.jpg").convert_alpha()
 icon = pygame.image.load("assets/player_tank.png").convert()
 pygame.display.set_icon(icon)
 
@@ -22,15 +23,25 @@ gameObject = Game(screen)
 running = True
 
 clock = pygame.time.Clock()
-
-
 while running:
-    screen.blit(background, (0, 0))
+    if gameObject.get_game_screen() == "Game":
+        screen.blit(gameBackground, (0, 0))
+        gameObject.draw_game()
+        gameObject.handle_game_events()
+        gameObject.update_game()
 
-    gameObject.draw()
-    gameObject.handle_events()
+    elif gameObject.get_game_screen() == "Menu":
+        screen.blit(menuBackground, (0, 0))
+        gameObject.draw_menu()
+        gameObject.handle_menu_events()
+        gameObject.update_menu()
 
-    gameObject.update()
+    elif gameObject.get_game_screen() == "Scoreboard":
+        screen.blit(menuBackground, (0, 0))
+        gameObject.draw_scoreboard()
+        gameObject.handle_scoreboard_events()
+        gameObject.update_scoreboard()
+
     clock.tick(120)
     pygame.display.update()
 

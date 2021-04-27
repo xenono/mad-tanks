@@ -5,8 +5,8 @@ class Settings:
 
     def __init__(self):
         # Window settings
-        self.screenWidth = 1400
-        self.screenHeight = 900
+        self.screenWidth = 1300
+        self.screenHeight = 700
         self.borderSize = 5
 
         # Tank settings

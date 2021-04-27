@@ -4,6 +4,8 @@ from TankSubclasses.Enemy import Enemy
 from SpriteSubclasses.TankBullet import TankBullet
 from GifAnimation.GifAnimation import GifAnimation
 from StaticSprite.StaticSprite import StaticSprite
+from Button.Button import Button
+from Mouse.Mouse import Mouse
 from utils.CollisionDetection import CollisionDetection
 from settings import Settings
 
@@ -18,9 +20,18 @@ class Game:
         self.bulletsArray = []
         self.buildingsArray = []
         self.screen = screen
+        self._gameScreen = "Menu"
+        self.mouse = Mouse()
+        self.menu_title = pygame.image.load("assets/menuTitle.png")
+        self.menu_play_button = Button(self.screen, 706, 87, "assets/playButton.png", "assets/activePlayButton.png",
+                                       250, self.mouse)
+        self.menu_exit_button = Button(self.screen, 706, 87, "assets/exitButton.png", "assets/activeExitButton.png",
+                                       450, self.mouse)
+        self.main_menu_button = Button(self.screen, 706, 87, "assets/mainMenuButton.png",
+                                       "assets/activeMainMenuButton.png", 250, self.mouse)
 
         # All animations frames
-        self. animations = {
+        self.animations = {
             "bulletExplosion": GifAnimation.load_frames(24, 0, "explosion_50"),
             "tankExplosion": GifAnimation.load_frames(0, 6, "tank_explosion"),
         }
@@ -31,6 +42,13 @@ class Game:
         # Sets up interval to create Enemy every certain amount of time
         self.startTime = time.time()
 
+    def reset_level(self):
+        self.buildingsArray = []
+        self.tanksArray = []
+        self.animationObjects = []
+        self.bulletsArray = []
+        self.playersTank.health = 3
+        self.playersTank.alive = True
         # Creates levels from level json file
         base_path = os.path.abspath(os.getcwd())
         for file_name in os.listdir(os.path.join(base_path, "levels")):
@@ -38,9 +56,9 @@ class Game:
             with open(file_path) as file:
                 data = json.load(file)
 
-                # # Adds buildings
+                # Adds buildings
                 for building in data['buildings']:
-                    building_object = StaticSprite(screen, building["x"], building["y"],
+                    building_object = StaticSprite(self.screen, building["x"], building["y"],
                                                    "assets/" + building["type"] + ".png")
                     self.buildingsArray.append(building_object)
 
@@ -48,13 +66,19 @@ class Game:
                 for tank_data in data['enemies']:
                     position_x = tank_data["x"]
                     position_y = tank_data["y"]
-                    enemy_tank = Enemy(position_x, position_y, screen, self.bulletsArray)
+                    enemy_tank = Enemy(position_x, position_y, self.screen, self.bulletsArray)
                     self.tanksArray.append(enemy_tank)
 
         # Adds sprites to lists of certain type of sprite
         self.tanksArray.append(self.playersTank)
 
-    def draw(self):
+    def get_game_screen(self):
+        return self._gameScreen
+
+    def set_game_screen(self, screen):
+        self._gameScreen = screen
+
+    def draw_game(self):
         # Draws every sprite which is in game
         for tank in self.tanksArray:
             tank.draw()
@@ -63,7 +87,45 @@ class Game:
         for building in self.buildingsArray:
             building.draw()
 
-    def handle_events(self):
+    def draw_menu(self):
+        self.screen.blit(self.menu_title, (settings.screenWidth / 2 - 353, 50))
+        self.menu_play_button.draw()
+        self.menu_exit_button.draw()
+
+    def draw_scoreboard(self):
+        self.screen.blit(self.menu_title, (settings.screenWidth / 2 - 353, 50))
+        self.main_menu_button.draw()
+        self.menu_exit_button.draw()
+
+    def handle_menu_events(self):
+        for event in pygame.event.get():
+            # Closes the window when pressing X on upper taskbar
+            if event.type == pygame.QUIT:
+                running = False
+                pygame.quit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if CollisionDetection.collision(self.mouse, self.menu_play_button):
+                    self.reset_level()
+                    self.set_game_screen("Game")
+                elif CollisionDetection.collision(self.mouse, self.menu_exit_button):
+                    pygame.quit()
+                    quit()
+
+    def handle_scoreboard_events(self):
+        for event in pygame.event.get():
+            # Closes the window when pressing X on upper taskbar
+            if event.type == pygame.QUIT:
+                running = False
+                pygame.quit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if CollisionDetection.collision(self.mouse, self.menu_play_button):
+                    self.reset_level()
+                    self.set_game_screen("Menu")
+                elif CollisionDetection.collision(self.mouse, self.menu_exit_button):
+                    pygame.quit()
+                    quit()
+
+    def handle_game_events(self):
         for event in pygame.event.get():
             # Closes the window when pressing X on upper taskbar
             if event.type == pygame.QUIT:
@@ -109,7 +171,21 @@ class Game:
             self.tanksArray.append(enemy_tank)
             enemy_tank.make_decision(False)
 
-    def update(self):
+    def update_menu(self):
+        self.menu_play_button.update()
+        self.menu_exit_button.update()
+        self.mouse.update()
+
+    def update_scoreboard(self):
+        self.main_menu_button.update()
+        self.menu_exit_button.update()
+        self.mouse.update()
+
+    def update_game(self):
+        # Checks if player is alive
+        if self.playersTank.health == 0:
+            self.set_game_screen("Scoreboard")
+            return
         # prevents every sprite from leaving game surface borders
         for tank_1 in self.tanksArray:
             if tank_1.position["x"] <= settings.borderSize:
