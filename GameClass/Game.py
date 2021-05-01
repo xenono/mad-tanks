@@ -24,11 +24,17 @@ class Game:
         self.mouse = Mouse()
         self.menu_title = pygame.image.load("assets/menuTitle.png")
         self.menu_play_button = Button(self.screen, 706, 87, "assets/playButton.png", "assets/activePlayButton.png",
-                                       250, self.mouse)
+                                       225, self.mouse)
         self.menu_exit_button = Button(self.screen, 706, 87, "assets/exitButton.png", "assets/activeExitButton.png",
-                                       450, self.mouse)
+                                       525, self.mouse)
+        self.menu_controls_button = Button(self.screen, 706, 87, "assets/controlsButton.png",
+                                           "assets/activeControlsButton.png",
+                                           375, self.mouse)
         self.main_menu_button = Button(self.screen, 706, 87, "assets/mainMenuButton.png",
-                                       "assets/activeMainMenuButton.png", 250, self.mouse)
+                                       "assets/activeMainMenuButton.png", 500, self.mouse)
+        self.controlsBoard = pygame.image.load("assets/controlsBoard2.png")
+        self.font = pygame.font.Font("fonts/Montserrat-Bold.ttf", 48)
+        self.healthImage = pygame.image.load("assets/heart.png")
 
         # All animations frames
         self.animations = {
@@ -66,7 +72,8 @@ class Game:
                 for tank_data in data['enemies']:
                     position_x = tank_data["x"]
                     position_y = tank_data["y"]
-                    enemy_tank = Enemy(position_x, position_y, self.screen, self.bulletsArray)
+                    tank_type = tank_data["type"]
+                    enemy_tank = Enemy(position_x, position_y, self.screen, self.bulletsArray, tank_type)
                     self.tanksArray.append(enemy_tank)
 
         # Adds sprites to lists of certain type of sprite
@@ -86,16 +93,33 @@ class Game:
             bullet.draw()
         for building in self.buildingsArray:
             building.draw()
+        for i in range(self.playersTank.health):
+            self.screen.blit(self.healthImage, (settings.screenWidth - 100 + (32 * i), settings.screenHeight - 40))
 
     def draw_menu(self):
         self.screen.blit(self.menu_title, (settings.screenWidth / 2 - 353, 50))
         self.menu_play_button.draw()
         self.menu_exit_button.draw()
+        self.menu_controls_button.draw()
 
     def draw_scoreboard(self):
         self.screen.blit(self.menu_title, (settings.screenWidth / 2 - 353, 50))
+        if self.playersTank.health == 0:
+            text = self.font.render("Enemies destroyed you!", False, (255, 255, 255))
+            self.screen.blit(text, (settings.screenWidth / 2 - text.get_width() / 2, 300))
+
+        elif self.playersTank.health > 0 and len(self.tanksArray) == 1 and self.tanksArray[0] == self.playersTank:
+            text_1 = self.font.render("Congratulations!", False, (255, 255, 255))
+            text_2 = self.font.render("You have destroyed all your enemies.", False, (255, 255, 255))
+            self.screen.blit(text_1, (settings.screenWidth / 2 - text_1.get_width() / 2, 275))
+            self.screen.blit(text_2, (settings.screenWidth / 2 - text_2.get_width() / 2, 350))
+
         self.main_menu_button.draw()
-        self.menu_exit_button.draw()
+
+    def draw_controls(self):
+        self.screen.blit(self.menu_title, (settings.screenWidth / 2 - 353, 50))
+        self.screen.blit(self.controlsBoard, (settings.screenWidth / 2 - 353, 200))
+        self.main_menu_button.draw()
 
     def handle_menu_events(self):
         for event in pygame.event.get():
@@ -107,6 +131,8 @@ class Game:
                 if CollisionDetection.collision(self.mouse, self.menu_play_button):
                     self.reset_level()
                     self.set_game_screen("Game")
+                elif CollisionDetection.collision(self.mouse, self.menu_controls_button):
+                    self.set_game_screen("Controls")
                 elif CollisionDetection.collision(self.mouse, self.menu_exit_button):
                     pygame.quit()
                     quit()
@@ -118,12 +144,9 @@ class Game:
                 running = False
                 pygame.quit()
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if CollisionDetection.collision(self.mouse, self.menu_play_button):
+                if CollisionDetection.collision(self.mouse, self.main_menu_button):
                     self.reset_level()
                     self.set_game_screen("Menu")
-                elif CollisionDetection.collision(self.mouse, self.menu_exit_button):
-                    pygame.quit()
-                    quit()
 
     def handle_game_events(self):
         for event in pygame.event.get():
@@ -174,6 +197,7 @@ class Game:
     def update_menu(self):
         self.menu_play_button.update()
         self.menu_exit_button.update()
+        self.menu_controls_button.update()
         self.mouse.update()
 
     def update_scoreboard(self):
@@ -181,9 +205,17 @@ class Game:
         self.menu_exit_button.update()
         self.mouse.update()
 
+    def update_controls(self):
+        self.main_menu_button.update()
+        self.mouse.update()
+
     def update_game(self):
-        # Checks if player is alive
+        # Checks if player lost
         if self.playersTank.health == 0:
+            self.set_game_screen("Scoreboard")
+            return
+        # Checks if player win
+        if len(self.tanksArray) == 1 and self.tanksArray[0] == self.playersTank and len(self.animationObjects) == 0:
             self.set_game_screen("Scoreboard")
             return
         # prevents every sprite from leaving game surface borders

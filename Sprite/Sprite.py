@@ -12,7 +12,7 @@ DIRECTIONS = {
 settings = Settings()
 
 
-class Sprite():
+class Sprite:
     """
         General Sprite class which has shared functions and attributes for every sprites which is on the screen.
     """

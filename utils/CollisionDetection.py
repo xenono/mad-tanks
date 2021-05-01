@@ -16,14 +16,7 @@ class CollisionDetection:
 
     @staticmethod
     def position_tank_relatively_to_moving_direction(tank, sprite):
-        # if tank.current_image_angle == 0:
-        #     tank.position['y'] = sprite.height + sprite.position['y']
-        # elif tank.current_image_angle == 180:
-        #     tank.position['y'] = sprite.position['y'] - tank.height
-        # elif tank.current_image_angle == 270:
-        #     tank.position['x'] = sprite.position['x'] - tank.width
-        # elif tank.current_image_angle == 90:
-        #     tank.position['x'] = sprite.position['x'] + sprite.width
+
         if tank.current_image_angle == 0 and tank.position['y'] > sprite.position['y'] + (sprite.height / 2):
             tank.position['y'] = sprite.height + sprite.position['y']
         if tank.current_image_angle == 180 and tank.position['y'] < sprite.position['y'] + (sprite.height / 2):

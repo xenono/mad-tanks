@@ -8,11 +8,16 @@ settings = Settings()
 
 
 class Enemy(Tank):
-    def __init__(self, position_x, position_y, screen, bullets_array):
+    def __init__(self, position_x, position_y, screen, bullets_array, tank_type):
         super().__init__(position_x, position_y, screen)
 
-        self.image = pygame.image.load("assets/Tiger.png").convert_alpha()
-
+        self.image = pygame.image.load("assets/{}.png".format(tank_type)).convert_alpha()
+        if tank_type == "panzer_4":
+            self.health = 1
+        elif tank_type == "panther":
+            self.health = 2
+        elif tank_type == "Tiger":
+            self.health = 3
         self.decision_delay = 0
         self.bullets_array = bullets_array
         # Start decision timer
@@ -48,16 +53,6 @@ class Enemy(Tank):
             self.shootingTimer = time.time()
             self.shootingInterval = random.randint(1, 3)
 
-    @staticmethod
-    def lower_the_difference(num_1, num_2):
-        # num_1 wants to be num_2
-        if num_2 > num_1:
-            return num_1 + 1
-        elif num_2 < num_1:
-            return num_1 - 1
-        else:
-            return num_1
-
     def choose_path_randomly(self):
         try:
             direction = random.choice(
@@ -72,8 +67,6 @@ class Enemy(Tank):
         self.move(direction)
         self.shoot(self.bullets_array)
         self.make_decision(True)
-
-    # def attack_player(self, player):
 
     def player_in_range(self, player):
         player_x = player.position["x"]
@@ -152,9 +145,7 @@ class Enemy(Tank):
                             self.possibleDirections["RIGHT"] = False
                             self.make_decision(True)
                             return
-                            # self.position['x'] = tank.position['x'] - self.width
                         elif self.current_image_angle == 90:
-                            # self.position['x'] = tank.position['x'] + tank.width
                             self.speed_x = 0
                             self.possibleDirections["LEFT"] = False
                             self.make_decision(True)

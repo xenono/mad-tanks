@@ -8,13 +8,14 @@ from GameClass.Game import Game
 
 # Pygame setup
 pygame.init()
+pygame.font.init()
 settings = Settings()
 screen = pygame.display.set_mode((settings.screenWidth, settings.screenHeight))
 # Game bar setup
 pygame.display.set_caption("Tanks")
 gameBackground = pygame.image.load("assets/background.jpg").convert()
 menuBackground = pygame.image.load("assets/t-34Background.jpg").convert_alpha()
-icon = pygame.image.load("assets/player_tank.png").convert()
+icon = pygame.image.load("assets/T-34.png").convert()
 pygame.display.set_icon(icon)
 
 gameObject = Game(screen)
@@ -36,11 +37,17 @@ while running:
         gameObject.handle_menu_events()
         gameObject.update_menu()
 
-    elif gameObject.get_game_screen() == "Scoreboard":
+    elif gameObject.get_game_screen() == "Scorebo   ard":
         screen.blit(menuBackground, (0, 0))
         gameObject.draw_scoreboard()
         gameObject.handle_scoreboard_events()
         gameObject.update_scoreboard()
+
+    elif gameObject.get_game_screen() == "Controls":
+        screen.blit(menuBackground, (0, 0))
+        gameObject.draw_controls()
+        gameObject.handle_scoreboard_events()
+        gameObject.update_controls()
 
     clock.tick(120)
     pygame.display.update()

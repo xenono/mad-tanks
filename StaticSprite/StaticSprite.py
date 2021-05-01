@@ -17,7 +17,7 @@ class StaticSprite:
         General Sprite class which has shared functions and attributes for every sprites which is on the screen.
     """
 
-    def __init__(self, screen,position_x, position_y, image_link):
+    def __init__(self, screen, position_x, position_y, image_link):
         # Calls constructor of pygame Sprite class.
         pygame.sprite.Sprite.__init__(self)
         # Holds Sprite's position in dict
